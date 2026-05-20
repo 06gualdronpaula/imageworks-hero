@@ -544,6 +544,93 @@
     .why-grid { grid-template-columns: 1fr; }
     .why-card:nth-child(5) { grid-column: auto; }
   }
+
+  /* ---------- "About" / We Are section ---------- */
+  .about {
+    background: #0d2952;
+    color: #fff;
+    padding: 110px 0;
+  }
+  .about-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 70px;
+    align-items: center;
+  }
+  .about-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #8cc63f;
+    margin-bottom: 26px;
+  }
+  .about-eyebrow::before {
+    content: "";
+    width: 44px;
+    height: 2px;
+    background: #8cc63f;
+    border-radius: 2px;
+  }
+  .about-title {
+    font-size: clamp(36px, 4.4vw, 56px);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+    color: #fff;
+    margin: 0 0 28px;
+  }
+  .about-desc {
+    font-size: 16px;
+    line-height: 1.65;
+    color: rgba(255, 255, 255, 0.78);
+    max-width: 560px;
+    margin: 0 0 36px;
+  }
+  .about-cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 14px 30px;
+    border: 1.5px solid rgba(255, 255, 255, 0.85);
+    border-radius: 999px;
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+  .about-cta:hover {
+    background: #fff;
+    color: #0d2952;
+    transform: translateY(-2px);
+  }
+  .about-visual {
+    position: relative;
+    min-height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px dashed rgba(255, 255, 255, 0.18);
+    border-radius: 18px;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 13px;
+  }
+  .about-visual::before {
+    content: "Graphic coming soon";
+  }
+
+  @media (max-width: 900px) {
+    .about { padding: 80px 0; }
+    .about-inner { grid-template-columns: 1fr; gap: 50px; padding: 0 24px; }
+    .about-visual { min-height: 280px; }
+  }
 </style>
 </head>
 <body>
@@ -675,6 +762,24 @@
         <h3>Crafted by humans. Enhanced by AI.</h3>
       </article>
     </div>
+    </div>
+  </section>
+
+  <section class="about" id="about">
+    <div class="about-inner">
+      <div class="about-copy">
+        <p class="about-eyebrow">Since 1997</p>
+        <h2 class="about-title">We Are<br />ImageWorks Creative.</h2>
+        <p class="about-desc">
+          Helping local service businesses grow online through thoughtful web
+          design and digital marketing. After decades of building websites and
+          marketing programs, we created our Local Growth Plans &mdash; a
+          smarter way to align your website, marketing, and ongoing
+          improvement.
+        </p>
+        <a class="about-cta" href="#">Explore the Plans</a>
+      </div>
+      <div class="about-visual" aria-label="Graphic placeholder"></div>
     </div>
   </section>
 
