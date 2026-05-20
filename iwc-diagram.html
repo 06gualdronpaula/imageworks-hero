@@ -1,0 +1,1970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hero Section</title>
+    <!-- Import Plus Jakarta Sans from Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #FAFBFD;
+            --title-color: #263A62;
+            --accent-color: #80C34A;
+            --body-text-color: #616876;
+            --base-font-size: 16px;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: var(--base-font-size);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        .hero {
+            background-color: var(--bg-color);
+            width: 100%;
+            height: 920px;
+            padding-top: 80px;
+            display: flex;
+            justify-content: center;
+            box-sizing: border-box;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('bg.svg');
+            background-size: cover;
+            background-position: center;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .hero-static-mask {
+            mask-image: url('mask.svg');
+            mask-repeat: no-repeat;
+            mask-position: center 15px;
+            -webkit-mask-image: url('mask.svg');
+            -webkit-mask-repeat: no-repeat;
+            -webkit-mask-position: center 15px;
+        }
+
+        .hero-cursor-mask {
+            --cursor-x: 50%;
+            --cursor-y: 50%;
+            /* Glass effect */
+            background-color: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+
+            /* Organic blurred mask */
+            mask-image: radial-gradient(circle 150px at var(--cursor-x) var(--cursor-y), black 20%, transparent 80%);
+            -webkit-mask-image: radial-gradient(circle 150px at var(--cursor-x) var(--cursor-y), black 20%, transparent 80%);
+
+            z-index: 1;
+            /* Remove clip-path as we are using mask-image now */
+            clip-path: none;
+        }
+
+        @keyframes centerSvgEntrance {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) scale(1);
+            }
+        }
+
+        .hero-center-svg {
+            position: absolute;
+            top: 338px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            animation: centerSvgEntrance 320ms ease-out forwards;
+            transition: filter 0.3s ease, opacity 0.3s ease;
+        }
+
+        .hero-tag {
+            position: absolute;
+            width: 138px;
+            height: 34px;
+            padding: 4px 14px;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+
+            /* Positioned to the left of center.svg */
+            /* center.svg is 220px wide, so its left edge is at calc(50% - 110px) */
+            /* tag is 138px wide, so it should be at calc(50% - 110px - 138px) */
+            left: calc(50% - 220px);
+            /* Vertically centered with center.svg */
+            /* center.svg top is 338px, center is 338 + 110 = 448px */
+            /* tag height is 34px, so top is 448 - 17 = 431px */
+            top: 431px;
+
+            background: #18497D;
+            border: 1px solid #E9EEF4;
+            border-radius: 17px; /* Pill shape */
+
+            color: #FFFFFF;
+            font-size: 0.875rem;
+            font-weight: 600;
+            z-index: 4;
+            pointer-events: auto;
+            transition: filter 0.3s ease, opacity 0.3s ease;
+        }
+
+        .hero-tag-right {
+            position: absolute;
+            width: 138px;
+            height: 34px;
+            padding: 4px 14px;
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+
+            /* Symmetrically positioned to the right of center.svg */
+            right: calc(50% - 220px);
+            top: 431px;
+
+            background: #4A8628;
+            border: 1px solid #E9EEF4;
+            border-radius: 17px;
+
+            color: #FFFFFF;
+            font-size: 0.875rem;
+            font-weight: 600;
+            z-index: 4;
+            pointer-events: auto;
+            transition: filter 0.3s ease, opacity 0.3s ease;
+        }
+
+        .hero-tag-svg {
+            position: absolute;
+            pointer-events: none; /* Changed from auto */
+            z-index: -1;
+            transition: filter 0.3s ease, opacity 0.3s ease;
+        }
+
+        .hero-tag-svg path {
+            pointer-events: all;
+            cursor: pointer;
+        }
+
+        .hero-tag-icon {
+            position: absolute;
+            pointer-events: auto;
+            z-index: 5;
+            opacity: 0;
+            width: 64px;
+            height: 64px;
+            cursor: pointer;
+            transition: filter 0.4s cubic-bezier(0.165, 0.84, 0.44, 1),
+            opacity 0.4s cubic-bezier(0.165, 0.84, 0.44, 1),
+            transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            transform: translate(-50%, -50%) scale(1);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .hero-tag-icon svg {
+            width: 64px;
+            height: 66px;
+            flex-shrink: 0;
+        }
+
+        .hero-tag-icon-label {
+            position: absolute;
+            pointer-events: auto;
+            z-index: 5;
+            opacity: 0;
+            color: #616876;
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1.2;
+            text-align: center;
+            width: 140px;
+            left: 50%;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        /* Desaturation Effect */
+        .hero.is-hovering .hero-center-svg,
+        .hero.is-hovering .hero-tag,
+        .hero.is-hovering .hero-tag-right,
+        .hero.is-hovering .hero-tag-svg,
+        .hero.is-hovering .hero-tag-icon,
+        .hero.is-hovering .hero-tag-icon-label,
+        .hero.is-hovering .hero-stack {
+            filter: grayscale(100%);
+            opacity: 0.4;
+            transition: filter 0.3s ease, opacity 0.3s ease;
+        }
+
+        /* Hover Cards */
+        .hero-card {
+            position: absolute;
+            width: 480px;
+            max-width: min(480px, calc(100vw - 48px));
+            background: #FFFFFF;
+            border-radius: 24px;
+            padding: 32px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            /* Centered on hub: .hero-center-svg top (338px) + half height (110px) */
+            transform: translate(-50%, -50%) scale(0.92);
+            transform-origin: center center;
+            transition: opacity 0.4s cubic-bezier(0.165, 0.84, 0.44, 1),
+                visibility 0.4s cubic-bezier(0.165, 0.84, 0.44, 1),
+                transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            text-align: left;
+            pointer-events: auto;
+            border: 1px solid rgba(233, 238, 244, 0.5);
+        }
+
+        .hero.is-hovering .hero-card.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+
+        .card-icon {
+            width: 64px;
+            height: 64px;
+            margin-bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .card-icon svg {
+            width: 64px;
+            height: 66px;
+            flex-shrink: 0;
+        }
+
+        .card-title {
+            color: #263A62;
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .card-text {
+            color: #616876;
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        /* Card anchor: horizontal + vertical center of hub (matches .hero-center-svg) */
+        .card-l1, .card-l2, .card-l3,
+        .card-r1, .card-r2, .card-r3, .card-r4 {
+            left: 50%;
+            top: calc(338px + 110px);
+        }
+
+
+        /* Stack Section Styles */
+        .hero-stack {
+            position: absolute;
+            top: 580px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 700px;
+            height: 220px;
+            z-index: 3;
+            transition: filter 0.3s ease, opacity 0.3s ease;
+        }
+
+        .stack-pill {
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #FFFFFF;
+            border: 1px solid #E9EEF4;
+            border-radius: 20px;
+            padding: 4px 20px;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #616876;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            z-index: 10;
+        }
+
+        .stack-icon-container {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 5;
+            transform: translate(-50%, -50%);
+        }
+
+        .stack-lines-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Override for active group */
+        .hero.hover-l1 .hero-tag-svg-1, .hero.hover-l1 .hero-tag-icon-1, .hero.hover-l1 .hero-tag-icon-label-1,
+        .hero.hover-l2 .hero-tag-svg-2, .hero.hover-l2 .hero-tag-icon-2, .hero.hover-l2 .hero-tag-icon-label-2,
+        .hero.hover-l3 .hero-tag-svg-3, .hero.hover-l3 .hero-tag-icon-3, .hero.hover-l3 .hero-tag-icon-label-3,
+        .hero.hover-r1 .hero-tag-right-svg-1, .hero.hover-r1 .hero-tag-right-icon-1, .hero.hover-r1 .hero-tag-right-icon-label-1,
+        .hero.hover-r2 .hero-tag-right-svg-2, .hero.hover-r2 .hero-tag-right-icon-2, .hero.hover-r2 .hero-tag-right-icon-label-2,
+        .hero.hover-r3 .hero-tag-right-svg-3, .hero.hover-r3 .hero-tag-right-icon-3, .hero.hover-r3 .hero-tag-right-icon-label-3,
+        .hero.hover-r4 .hero-tag-right-svg-4, .hero.hover-r4 .hero-tag-right-icon-4, .hero.hover-r4 .hero-tag-right-icon-label-4 {
+            filter: none !important;
+            opacity: 1 !important;
+        }
+
+        /* Keep the tag colored if one of its children is hovered */
+        .hero.is-hovering .hero-tag:has(.hover-group:hover),
+        .hero.is-hovering .hero-tag-right:has(.hover-group:hover) {
+            filter: none;
+            opacity: 1;
+        }
+        /* Fallback for browsers that don't support :has() well, though it's 2024+ */
+        .hero.hover-l1 .hero-tag, .hero.hover-l2 .hero-tag, .hero.hover-l3 .hero-tag,
+        .hero.hover-r1 .hero-tag-right, .hero.hover-r2 .hero-tag-right, .hero.hover-r3 .hero-tag-right, .hero.hover-r4 .hero-tag-right {
+            filter: none;
+            opacity: 1;
+        }
+
+        .hero-line-dot {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            pointer-events: none;
+            z-index: 100;
+            visibility: hidden;
+            offset-rotate: auto;
+        }
+
+        .hero.is-hovering .hero-line-dot.active {
+            visibility: visible;
+            animation: dotMove 2s linear infinite;
+        }
+
+        @keyframes dotMove {
+            0% { offset-distance: 0%; }
+            100% { offset-distance: 100%; }
+        }
+
+        /* Specific offset-paths for each dot */
+        .dot-l1 { offset-path: path('M250.031 206.75H227.375C193.003 206.75 161.703 186.957 146.968 155.904L98.7782 54.3464C84.0431 23.2928 52.7434 3.5 18.3711 3.5H37.5'); }
+        .dot-l2 { offset-path: path('M250.031 3.5H227.375C193.003 3.5 161.703 23.2928 146.968 54.3464L98.7782 155.904C84.0431 186.957 52.7434 206.75 18.3711 206.75H37.5'); }
+        .dot-l3 { offset-path: path('M227.5 6.5H37.5'); }
+        .dot-r1 { offset-path: path('M37.49998 206.75C64.5281 206.75 95.8279 186.957 110.563 155.904L158.753 54.3464C173.488 23.2928 204.787 3.5 239.16 3.5H250.031'); }
+        .dot-r2 { offset-path: path('M37.5 3.5H55.7428C75.6303 3.5 94.9447 10.1609 110.604 22.42L158.711 60.08C174.371 72.3391 193.685 79 213.573 79H279.5'); }
+        .dot-r3 { offset-path: path('M37.49998 3.5C64.5281 3.5 95.8279 23.2928 110.563 54.3464L158.753 155.904C173.488 186.957 204.787 206.75 239.16 206.75H250.031'); }
+        .dot-r4 { offset-path: path('M37.5 79H55.7428C75.6303 79 94.9447 72.3391 110.604 60.08L158.711 22.42C174.371 10.1609 193.685 3.5 213.573 3.5H279.5'); }
+
+        @keyframes redrawLines {
+            from { stroke-dashoffset: 1000; }
+            to { stroke-dashoffset: 0; }
+        }
+
+        @keyframes iconEntrance {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.5);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        @keyframes labelEntrance {
+            from {
+                opacity: 0;
+                transform: translate(-50%, 20px);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, 0);
+            }
+        }
+
+        .hero-tag-svg-1 { left: -250.5px; top: calc(50% - 206.75px); }
+        .hero-tag-svg-2 { left: -250.5px; top: calc(50% - 3.5px); }
+        .hero-tag-svg-3 { left: -227.5px; top: calc(50% - 6.5px); }
+
+        /* Path starts at x=37.5; left offset + 37.5 = pill width (138px) → stroke begins at right edge of Ongoing pill */
+        .hero-tag-right-svg-1 { left: calc(100% - 37.5px); top: calc(50% - 206.75px); }
+        .hero-tag-right-svg-2 { left: calc(100% - 37.5px); top: calc(50% - 3.5px); }
+        .hero-tag-right-svg-3 { left: calc(100% - 37.5px); top: calc(50% - 3.5px); }
+        .hero-tag-right-svg-4 { left: calc(100% - 37.5px); top: calc(50% - 79px); }
+
+        .hero-tag-svg path {
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: redrawLines 1.2s ease-out forwards;
+        }
+
+        .hero-tag-svg-1 path { animation-delay: 0.4s; }
+        .hero-tag-svg-2 path { animation-delay: 0.4s; }
+        .hero-tag-svg-3 path { animation-delay: 0.6s; animation-duration: 0.8s; }
+
+        .hero-tag-right-svg-1 path, .hero-tag-right-svg-3 path { animation-delay: 0.5s; animation-duration: 1.4s; }
+        .hero-tag-right-svg-2 path, .hero-tag-right-svg-4 path { animation-delay: 0.6s; animation-duration: 1.1s; }
+
+        .hero-tag-icon-1 { left: -212.5px; top: calc(50% - 203.25px); animation: iconEntrance 0.5s ease-out 1.6s forwards; }
+        .hero-tag-icon-2 { left: -212.5px; top: calc(50% + 203.25px); animation: iconEntrance 0.5s ease-out 1.6s forwards; }
+        .hero-tag-icon-3 { left: -190px; top: 50%; animation: iconEntrance 0.5s ease-out 1.4s forwards; }
+
+        .hero-tag-right-icon-1 { left: calc(100% + 212.5px); top: calc(50% - 203.25px); animation: iconEntrance 0.5s ease-out 1.7s forwards; }
+        .hero-tag-right-icon-2 { left: calc(100% + 242px); top: calc(50% + 75.5px); animation: iconEntrance 0.5s ease-out 1.6s forwards; }
+        .hero-tag-right-icon-3 { left: calc(100% + 212.5px); top: calc(50% + 203.25px); animation: iconEntrance 0.5s ease-out 1.7s forwards; }
+        .hero-tag-right-icon-4 { left: calc(100% + 242px); top: calc(50% - 75.5px); animation: iconEntrance 0.5s ease-out 1.6s forwards; }
+
+        .hero-tag-icon-label-1 {
+            left: -212.5px;
+            top: calc(50% - 203.25px + 37px);
+            animation: labelEntrance 0.5s ease-out 1.6s forwards;
+        }
+
+        .hero-tag-icon-label-2 {
+            left: -212.5px;
+            top: calc(50% + 203.25px + 37px);
+            animation: labelEntrance 0.5s ease-out 1.6s forwards;
+        }
+
+        .hero-tag-icon-label-3 {
+            left: -190px;
+            top: calc(50% + 37px);
+            animation: labelEntrance 0.5s ease-out 1.4s forwards;
+        }
+
+        .hero-tag-right-icon-label-1 {
+            left: calc(100% + 212.5px);
+            top: calc(50% - 203.25px + 37px);
+            animation: labelEntrance 0.5s ease-out 1.7s forwards;
+        }
+
+        .hero-tag-right-icon-label-2 {
+            left: calc(100% + 242px);
+            top: calc(50% + 112.5px);
+            animation: labelEntrance 0.5s ease-out 1.6s forwards;
+        }
+
+        .hero-tag-right-icon-label-3 {
+            left: calc(100% + 212.5px);
+            top: calc(50% + 203.25px + 37px);
+            animation: labelEntrance 0.5s ease-out 1.7s forwards;
+        }
+        .hero-tag-right-icon-label-4 {
+            left: calc(100% + 242px);
+            top: calc(50% - 38.5px);
+            animation: labelEntrance 0.5s ease-out 1.6s forwards;
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            width: 100%;
+            text-align: center;
+            padding: 0 20px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-title {
+            color: var(--title-color);
+            /* 54px / 16px = 3.375rem */
+            font-size: 3.375rem;
+            font-weight: 800;
+            line-height: 1.25;
+            margin: 0 0 24px 0;
+        }
+
+        .hero-title span.accent {
+            color: var(--accent-color);
+        }
+
+        .hero-description {
+            color: var(--body-text-color);
+            /* Standard body text size is usually 1rem (16px) or similar */
+            font-size: 1.125rem;
+            line-height: 1.5;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+    </style>
+
+    <!-- Mobile hero styles — desktop CSS above is untouched -->
+    <style>
+        .mob-hero { display: none; }
+
+        @media (max-width: 767px) {
+            /* Hide all desktop-only elements */
+            .hero-tag, .hero-tag-right, .hero-center-svg,
+            .hero-stack, .hero-cursor-mask, .hero-card,
+            .hero-container, .mobile-section-header { display: none !important; }
+
+            .hero {
+                height: auto !important;
+                padding: 0 !important;
+                flex-direction: column;
+                align-items: stretch;
+                overflow: visible !important;
+            }
+
+            /* Mobile hero wrapper */
+            .mob-hero {
+                display: block;
+                width: 100%;
+                min-height: 100dvh;
+                background: #F4F7FB;
+                position: relative;
+                overflow: hidden;
+                font-family: 'Plus Jakarta Sans', sans-serif;
+                padding: 52px 0 44px;
+                box-sizing: border-box;
+            }
+
+            .mob-dotbg {
+                position: absolute; inset: 0; pointer-events: none;
+                background-image: radial-gradient(circle, #C8D3E2 1px, transparent 1px);
+                background-size: 14px 14px;
+                mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+                -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+                opacity: 0.55;
+            }
+
+            .mob-inner {
+                position: relative;
+                display: flex; flex-direction: column; align-items: center;
+                padding: 0 16px; box-sizing: border-box;
+            }
+
+            /* Title */
+            .mob-h1 {
+                margin: 0 0 28px;
+                font-weight: 800; font-size: 30px; line-height: 1.08;
+                letter-spacing: -0.8px; color: #0F2B4E; text-align: center;
+            }
+            .mob-h1 .accent { color: #5A9E2F; }
+            .mob-desc {
+                margin: -14px auto 28px; max-width: 300px;
+                font-size: 14px; line-height: 1.5; color: #5B6B80; text-align: center;
+            }
+
+            /* Mind-map column */
+            .mob-mindmap { display: flex; flex-direction: column; align-items: center; width: 100%; }
+
+            /* Node rows */
+            .mob-nodes-row {
+                display: grid; width: 343px; justify-items: center;
+            }
+            .mob-nodes-top    { grid-template-columns: 1fr 1fr 1fr; margin-bottom: -6px; }
+            .mob-nodes-top .mob-node { flex-direction: column-reverse; }
+            .mob-nodes-bottom { grid-template-columns: 1fr 1fr 1fr 1fr; margin-top: -6px; margin-bottom: 28px; }
+
+            .mob-node {
+                display: flex; flex-direction: column; align-items: center;
+                gap: 6px; cursor: pointer; position: relative;
+                -webkit-tap-highlight-color: transparent;
+            }
+
+            .mob-node-icon {
+                width: 54px; height: 54px; border-radius: 50%;
+                display: flex; align-items: center; justify-content: center;
+                transition: transform 0.15s ease; position: relative; z-index: 2;
+            }
+            .mob-node.active .mob-node-icon { transform: scale(0.92); }
+
+            .mob-node svg { width: 54px; height: 54px; }
+
+            .mob-node-label {
+                font-size: 14px; font-weight: 500; color: #14213D;
+                letter-spacing: 0.1px; white-space: nowrap; text-align: center;
+            }
+
+            /* Connectors */
+            .mob-connector { display: block; width: 343px; overflow: visible; }
+
+            @keyframes mob-flow { to { stroke-dashoffset: -130; } }
+
+            /* Pills */
+            .mob-pill {
+                padding: 7px 16px; border-radius: 999px;
+                font-size: 12px; font-weight: 600; letter-spacing: 0.3px;
+                color: #fff; white-space: nowrap; position: relative; z-index: 3;
+            }
+            .mob-pill-navy  { background: #0F2B4E; box-shadow: 0 4px 12px rgba(15,43,78,0.4); margin-top: -14px; margin-bottom: 4px; }
+            .mob-pill-green { background: #5A9E2F; box-shadow: 0 4px 12px rgba(90,158,47,0.4); margin-top: 4px; margin-bottom: -14px; }
+
+            /* Hub */
+            .mob-hub { position: relative; z-index: 3; margin: 4px 0; animation: mob-pulse 4s ease-in-out infinite; }
+            @keyframes mob-pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.04)} }
+
+            /* Cards — fixed centered overlay */
+            .mob-backdrop {
+                display: none; position: fixed; inset: 0;
+                background: rgba(0,0,0,0.35); z-index: 99;
+            }
+            .mob-backdrop.active { display: block; }
+            .mob-card {
+                display: none; position: fixed;
+                top: 50%; left: 50%; transform: translate(-50%, -50%);
+                width: 311px; z-index: 100;
+                background: #fff; border-radius: 20px; padding: 22px;
+                box-sizing: border-box;
+                box-shadow: 0 20px 48px -10px rgba(0,0,0,0.22);
+                border: 1px solid rgba(233,238,244,0.6);
+                flex-direction: column; gap: 4px;
+            }
+            .mob-card.active { display: flex; }
+            .mob-card-close {
+                position: absolute; top: 14px; right: 14px;
+                width: 28px; height: 28px; border-radius: 50%;
+                background: #F0F4F8; border: none; cursor: pointer;
+                display: flex; align-items: center; justify-content: center;
+                color: #6B7A8F; padding: 0;
+            }
+            .mob-card-close:active { background: #E3E8F0; }
+            .mob-card-icon { width: 56px; height: 56px; margin-bottom: 4px; }
+            .mob-card-icon svg { width: 56px; height: 56px; }
+            .mob-card-title { color: #263A62; font-size: 16px; font-weight: 700; margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+            .mob-card-text  { color: #616876; font-size: 14px; line-height: 1.6; margin: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+            /* Stack row */
+            .mob-stack { display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 4px; }
+            .mob-stack-label {
+                padding: 5px 14px; border-radius: 999px; background: #fff;
+                border: 1px solid #E3E8F0; font-size: 11px; font-weight: 600;
+                color: #14213D; letter-spacing: 0.3px;
+                box-shadow: 0 1px 3px rgba(15,43,78,0.06);
+            }
+            .mob-stack-icons-wrap { position: relative; width: 311px; height: 44px; }
+            .mob-stack-hline {
+                position: absolute; top: 50%; left: 14px; right: 14px;
+                height: 1px; background: #D7DEE8;
+            }
+            .mob-stack-row {
+                position: relative; display: flex; justify-content: space-between;
+                align-items: center; height: 100%;
+            }
+            .mob-stack-ic {
+                width: 28px; height: 28px; border-radius: 7px; background: #fff;
+                border: 1px solid #E3E8F0;
+                display: flex; align-items: center; justify-content: center;
+                box-shadow: 0 1px 2px rgba(15,43,78,0.05);
+            }
+            .mob-stack-ic svg { width: 15px; height: 15px; opacity: 0.4; }
+        }
+    </style>
+</head>
+<body>
+<section class="hero">
+    <!-- Static background with mask.svg -->
+    <div class="hero-bg-layer hero-static-mask"></div>
+
+    <!-- Dynamic background that follows the cursor -->
+    <div class="hero-bg-layer hero-cursor-mask" id="hero-cursor-mask"></div>
+
+    <!-- Tags -->
+    <div class="hero-tag">
+        <!-- Group L1 -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="258" height="223" viewBox="0 0 258 223" fill="none" class="hero-tag-svg hero-tag-svg-1">
+            <g filter="url(#filter0_d_9320_2497)">
+                <path d="M250.031 206.75H227.375C193.003 206.75 161.703 186.957 146.968 155.904L98.7782 54.3464C84.0431 23.2928 52.7434 3.5 18.3711 3.5H37.5" stroke="url(#paint0_linear_9320_2497)" stroke-width="4" class="hover-group" data-group="l1"/>
+            </g>
+            <defs>
+                <filter id="filter0_d_9320_2497" x="0" y="0" width="257.531" height="222.25" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                    <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                    <feOffset dy="6"/>
+                    <feGaussianBlur stdDeviation="3.75"/>
+                    <feComposite in2="hardAlpha" operator="out"/>
+                    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0.683333 0 0 0 0 1 0 0 0 0.31 0"/>
+                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9320_2497"/>
+                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9320_2497" result="shape"/>
+                </filter>
+                <linearGradient id="paint0_linear_9320_2497" x1="250.031" y1="152.878" x2="-53.8108" y2="152.878" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#18497D"/>
+                    <stop offset="1" stop-color="#00BBFF"/>
+                </linearGradient>
+            </defs>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="66" viewBox="0 0 64 66" fill="none" class="hero-tag-icon hero-tag-icon-1 hover-group" data-group="l1">
+            <circle cx="32" cy="32" r="32" fill="#0898D7"/>
+            <g filter="url(#filter0_d_9320_2505)">
+                <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+            </g>
+            <path d="M48.6055 35.0322L40.0137 38.9365L35.6855 48.3135L29 29L48.6055 35.0322ZM36.083 40.292L37.5225 37.1738L37.7568 36.668L40.1641 35.5732L33.7686 33.6055L36.083 40.292Z" fill="#616876"/>
+            <path d="M32 16C32.2603 16 32.5191 16.0063 32.7764 16.0186C32.9964 15.9853 33.2223 15.9997 33.4365 16.0645C41.6 16.7909 48 23.6476 48 32C48 32.0714 47.998 32.1427 47.9971 32.2139L44.9795 31.2852C44.8974 29.7736 44.558 28.3309 44.0029 27H40.3213C40.5829 27.9633 40.7807 28.9743 40.8936 30.0283L37.7158 29.0508C37.5811 28.3426 37.4055 27.6578 37.1934 27H31.0508L24.8457 25.0908L26.6084 30.1846C26.539 30.7755 26.5 31.381 26.5 32C26.5 34.047 26.8531 35.8797 27.4014 37.5H29.1416L30.1797 40.5H28.7373C29.6123 42.0657 30.6179 43.3369 31.501 44.3193L32.7686 47.9805C32.5139 47.9925 32.2577 48 32 48C31.8606 48 31.7216 47.9977 31.583 47.9941C31.4858 47.9997 31.3885 47.9967 31.292 47.9834C22.784 47.6129 16 40.5993 16 32C16 23.4033 22.7798 16.39 31.2842 16.0156C31.3864 16.0009 31.4899 15.9975 31.5928 16.0039C31.7281 16.0005 31.8639 16 32 16ZM22.168 40.5C23.607 42.1631 25.4586 43.459 27.5664 44.2236C26.7994 43.164 26.0305 41.9231 25.3721 40.5H22.168ZM19.9971 27C19.3551 28.5393 19 30.2281 19 32C19 33.966 19.4375 35.8295 20.2188 37.5H24.2578C23.7891 35.8464 23.5 34.0127 23.5 32C23.5 30.2227 23.7578 28.5497 24.1787 27H19.9971ZM27.6748 19.7373C25.3145 20.5698 23.2692 22.0663 21.7568 24H25.2451C25.9607 22.3761 26.8212 20.9445 27.6748 19.7373ZM32.1367 19.001C31.0819 20.1227 29.7014 21.8359 28.5713 24H35.9287C34.7996 21.8379 33.4197 20.1267 32.3652 19.0049C32.2892 19.0028 32.213 19.0018 32.1367 19.001ZM37.0078 20C37.8005 21.1506 38.5904 22.4922 39.2549 24H42.2432C40.8785 22.2552 39.0805 20.866 37.0078 20Z" fill="#616876"/>
+            <defs>
+                <filter id="filter0_d_9320_2505" x="2" y="6" width="60" height="60" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                    <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                    <feOffset dy="4"/>
+                    <feGaussianBlur stdDeviation="2"/>
+                    <feComposite in2="hardAlpha" operator="out"/>
+                    <feColorMatrix type="matrix" values="0 0 0 0 0.0941176 0 0 0 0 0.286275 0 0 0 0 0.490196 0 0 0 0.61 0"/>
+                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9320_2505"/>
+                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9320_2505" result="shape"/>
+                </filter>
+            </defs>
+        </svg>
+        <div class="hero-tag-icon-label hero-tag-icon-label-1 hover-group" data-group="l1">Website</div>
+        <div class="hero-line-dot hero-tag-svg-1 dot-l1" data-group="l1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
+                <circle cx="7.5" cy="7.5" r="5.5" fill="#FAFBFD" stroke="#7C95B0" stroke-width="4"/>
+            </svg>
+        </div>
+
+        <!-- Group L2 -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="258" height="223" viewBox="0 0 258 223" fill="none" class="hero-tag-svg hero-tag-svg-2">
+            <g filter="url(#filter0_d_9320_2502)">
+                <path d="M250.031 3.5H227.375C193.003 3.5 161.703 23.2928 146.968 54.3464L98.7782 155.904C84.0431 186.957 52.7434 206.75 18.3711 206.75H37.5" stroke="url(#paint0_linear_9320_2502)" stroke-width="4" class="hover-group" data-group="l2"/>
+            </g>
+            <defs>
+                <filter id="filter0_d_9320_2502" x="0" y="0" width="257.531" height="222.25" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                    <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                    <feOffset dy="6"/>
+                    <feGaussianBlur stdDeviation="3.75"/>
+                    <feComposite in2="hardAlpha" operator="out"/>
+                    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0.683333 0 0 0 0 1 0 0 0 0.31 0"/>
+                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9320_2502"/>
+                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9320_2502" result="shape"/>
+                </filter>
+                <linearGradient id="paint0_linear_9320_2502" x1="250.031" y1="57.372" x2="-53.8108" y2="57.372" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#18497D"/>
+                    <stop offset="1" stop-color="#00BBFF"/>
+                </linearGradient>
+            </defs>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="66" viewBox="0 0 64 66" fill="none" class="hero-tag-icon hero-tag-icon-2 hover-group" data-group="l2">
+            <circle cx="32" cy="32" r="32" fill="#0897D6"/>
+            <g filter="url(#filter0_d_9320_2547)">
+                <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+            </g>
+            <path d="M45.5605 44.4395C46.1463 45.0252 46.1463 45.9748 45.5605 46.5605C44.9748 47.1463 44.0252 47.1463 43.4395 46.5605L37.4395 40.5605L39.5605 38.4395L45.5605 44.4395Z" fill="#616876"/>
+            <path d="M44.9995 20C46.6564 20 47.9995 21.3431 47.9995 23V28.5C47.9995 30.1569 46.6564 31.5 44.9995 31.5C43.7667 31.4999 42.7088 30.7556 42.2476 29.6924L39.0522 32.6895C38.2914 33.4027 37.2146 33.6683 36.2104 33.3945L32.4927 32.3799L29.23 36.0068V36.0078C28.1215 37.239 26.2239 37.3384 24.9927 36.2305C23.7612 35.1219 23.6618 33.2235 24.77 31.9922L29.27 26.9922C30.0285 26.1499 31.1965 25.8079 32.2886 26.1055L36.1694 27.1631L37.9048 25.5371C37.0618 25.006 36.4995 24.0699 36.4995 23C36.4995 21.3433 37.8428 20.0002 39.4995 20H44.9995Z" fill="#616876" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M31 18C33.0963 18 35.0766 18.4966 36.8301 19.3779C36.0046 19.9874 35.3941 20.8719 35.1357 21.8965C33.8749 21.3228 32.4755 21 31 21C25.4772 21 21 25.4772 21 31C21 36.5228 25.4772 41 31 41C35.7903 41 39.7907 37.6311 40.7686 33.1338L42.0703 31.9141C42.5822 32.3537 43.1942 32.6795 43.8672 32.8545C42.9671 39.1557 37.55 44 31 44C23.8203 44 18 38.1797 18 31C18 23.8203 23.8203 18 31 18Z" fill="#616876"/>
+            <defs>
+                <filter id="filter0_d_9320_2547" x="2" y="6" width="60" height="60" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                    <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                    <feOffset dy="4"/>
+                    <feGaussianBlur stdDeviation="2"/>
+                    <feComposite in2="hardAlpha" operator="out"/>
+                    <feColorMatrix type="matrix" values="0 0 0 0 0.0941176 0 0 0 0 0.286275 0 0 0 0 0.490196 0 0 0 0.61 0"/>
+                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9320_2547"/>
+                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9320_2547" result="shape"/>
+                </filter>
+            </defs>
+        </svg>
+        <div class="hero-tag-icon-label hero-tag-icon-label-2 hover-group" data-group="l2">AI &amp; Search</div>
+        <div class="hero-line-dot hero-tag-svg-2 dot-l2" data-group="l2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
+                <circle cx="7.5" cy="7.5" r="5.5" fill="#FAFBFD" stroke="#7C95B0" stroke-width="4"/>
+            </svg>
+        </div>
+
+        <!-- Group L3 -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="235" height="19" viewBox="0 0 235 19" fill="none" class="hero-tag-svg hero-tag-svg-3">
+            <g filter="url(#filter0_d_9320_2546)">
+                <path d="M227.5 6.5H37.5" stroke="url(#paint0_linear_9320_2546)" stroke-width="4" class="hover-group" data-group="l3"/>
+            </g>
+            <defs>
+                <filter id="filter0_d_9320_2546" x="0" y="0" width="235" height="19" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                    <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                    <feOffset dy="3"/>
+                    <feGaussianBlur stdDeviation="3.75"/>
+                    <feComposite in2="hardAlpha" operator="out"/>
+                    <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0.515957 0 0 0 0 1 0 0 0 0.24 0"/>
+                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9320_2546"/>
+                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9320_2546" result="shape"/>
+                </filter>
+                <linearGradient id="paint0_linear_9320_2546" x1="227.5" y1="7.23495" x2="-48.1151" y2="7.23495" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#18497D"/>
+                    <stop offset="1" stop-color="#00BBFF"/>
+                </linearGradient>
+            </defs>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="66" viewBox="0 0 64 66" fill="none" class="hero-tag-icon hero-tag-icon-3 hover-group" data-group="l3">
+            <circle cx="32" cy="32" r="32" fill="#0897D6"/>
+            <g filter="url(#filter0_d_9320_2533)">
+                <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+            </g>
+            <path d="M42.5 18C45.5376 18 48 20.4624 48 23.5V34.5C48 35.3284 47.3284 36 46.5 36C45.6716 36 45 35.3284 45 34.5V27.5H19V40C19 41.3807 20.1193 42.5 21.5 42.5H31.5C32.3284 42.5 33 43.1716 33 44C33 44.8284 32.3284 45.5 31.5 45.5H21.5C18.4624 45.5 16 43.0376 16 40V23.5C16 20.4624 18.4624 18 21.5 18H42.5ZM21.5 21C20.1193 21 19 22.1193 19 23.5V24.5H45V23.5C45 22.1193 43.8807 21 42.5 21H21.5Z" fill="#616876"/>
+            <path d="M31.628 30.0035L31.7764 30.0162L35.0342 30.3776L35.5567 30.4361L45.4288 40.3082C47.1191 41.9986 47.1191 44.739 45.4288 46.4293C43.7384 48.1197 40.998 48.1197 39.3077 46.4293L29.4356 36.5572L29.377 36.0348L29.0157 32.777C28.8443 31.2344 30.1015 29.9229 31.628 30.0035ZM32.3008 35.1803L41.4288 44.3082C41.9476 44.827 42.7889 44.827 43.3077 44.3082C43.8265 43.7894 43.8265 42.9481 43.3077 42.4293L34.1797 33.3014L32.0655 33.066L32.3008 35.1803Z" fill="#616876"/>
+            <defs>
+                <filter id="filter0_d_9320_2533" x="2" y="6" width="60" height="60" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                    <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                    <feOffset dy="4"/>
+                    <feGaussianBlur stdDeviation="2"/>
+                    <feComposite in2="hardAlpha" operator="out"/>
+                    <feColorMatrix type="matrix" values="0 0 0 0 0.0941176 0 0 0 0 0.286275 0 0 0 0 0.490196 0 0 0 0.61 0"/>
+                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9320_2533"/>
+                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9320_2533" result="shape"/>
+                </filter>
+            </defs>
+        </svg>
+        <div class="hero-tag-icon-label hero-tag-icon-label-3 hover-group" data-group="l3">Content</div>
+        <div class="hero-line-dot hero-tag-svg-3 dot-l3" data-group="l3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
+                <circle cx="7.5" cy="7.5" r="5.5" fill="#FAFBFD" stroke="#7C95B0" stroke-width="4"/>
+            </svg>
+        </div>
+        Initial Build
+    </div>
+    <div class="hero-tag-right">
+        <!-- Group R1 -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="258" height="223" viewBox="0 0 258 223" fill="none" class="hero-tag-svg hero-tag-right-svg-1">
+            <g filter="url(#filter0_d_9320_2498)">
+                <path d="M37.49998 206.75C64.5281 206.75 95.8279 186.957 110.563 155.904L158.753 54.3464C173.488 23.2928 204.787 3.5 239.16 3.5H250.031" stroke="url(#paint0_linear_9320_2498)" stroke-width="4" class="hover-group" data-group="r1"/>
+            </g>
+            <defs>
+                <filter id="filter0_d_9320_2498" x="0" y="0" width="257.531" height="222.25" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                    <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                    <feOffset dy="6"/>
+                    <feGaussianBlur stdDeviation="3.75"/>
+                    <feComposite in2="hardAlpha" operator="out"/>
+                    <feColorMatrix type="matrix" values="0 0 0 0 0.827233 0 0 0 0 1 0 0 0 0 0.687988 0 0 0 1 0"/>
+                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9320_2498"/>
+                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9320_2498" result="shape"/>
+                </filter>
+                <linearGradient id="paint0_linear_9320_2498" x1="7.49993" y1="152.878" x2="311.342" y2="152.878" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#4A8628"/>
+                    <stop offset="1" stop-color="#EDFFE2"/>
+                </linearGradient>
+            </defs>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="66" viewBox="0 0 64 66" fill="none" class="hero-tag-icon hero-tag-right-icon-1 hover-group" data-group="r1">
+            <circle cx="32" cy="32" r="32" fill="#B3D4A0"/>
+            <g filter="url(#filter0_d_9320_2527)">
+                <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+            </g>
+            <g transform="translate(16, 19.5)">
+                <path d="M11.3711 12.0127C11.9165 11.3893 12.8638 11.3258 13.4873 11.8711C14.1107 12.4165 14.1742 13.3638 13.6289 13.9873L11.0518 16.9307L13.5605 19.4395C14.1463 20.0252 14.1463 20.9748 13.5605 21.5605C12.9748 22.1463 12.0252 22.1463 11.4395 21.5605L6.94727 17.0684L11.3711 12.0127Z" fill="#6A7661"/>
+                <path d="M18.9395 11.9395C19.5252 11.3537 20.4748 11.3537 21.0605 11.9395L25.5527 16.4316L21.1289 21.4873C20.5835 22.1107 19.6362 22.1742 19.0127 21.6289C18.3893 21.0835 18.3258 20.1362 18.8711 19.5127L21.4482 16.5693L18.9395 14.0605C18.3537 13.4748 18.3537 12.5252 18.9395 11.9395Z" fill="#6A7661"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M28 0C30.2091 0 32 1.79086 32 4V23C32 25.2091 30.2091 27 28 27H4C1.85996 27 0.112115 25.3194 0.00488281 23.2061L0 23V4C0 1.79086 1.79086 0 4 0H28ZM3 23C3 23.5523 3.44772 24 4 24H28C28.5523 24 29 23.5523 29 23V8.5H3V23ZM4 3C3.44771 3 3 3.44772 3 4V5.5H29V4C29 3.44772 28.5523 3 28 3H4Z" fill="#6A7661"/>
+            </g>
+            <defs>
+                <filter id="filter0_d_9320_2527" x="5" y="9" width="54" height="54" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                    <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                    <feOffset dy="4"/>
+                    <feGaussianBlur stdDeviation="2"/>
+                    <feComposite in2="hardAlpha" operator="out"/>
+                    <feColorMatrix type="matrix" values="0 0 0 0 0.290196 0 0 0 0 0.52549 0 0 0 0 0.156863 0 0 0 0.61 0"/>
+                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9320_2527"/>
+                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9320_2527" result="shape"/>
+                </filter>
+            </defs>
+        </svg>
+        <div class="hero-tag-icon-label hero-tag-right-icon-label-1 hover-group" data-group="r1">Maintenance</div>
+        <div class="hero-line-dot hero-tag-right-svg-1 dot-r1" data-group="r1">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
+                <circle cx="7.5" cy="7.5" r="5.5" fill="#FAFBFD" stroke="#7C95B0" stroke-width="4"/>
+            </svg>
+        </div>
+
+        <!-- Group R2 -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="287" height="95" viewBox="0 0 287 95" fill="none" class="hero-tag-svg hero-tag-right-svg-2">
+            <g filter="url(#filter0_d_9320_2499)">
+                <path d="M37.5 3.5H55.7428C75.6303 3.5 94.9447 10.1609 110.604 22.42L158.711 60.08C174.371 72.3391 193.685 79 213.573 79H279.5" stroke="url(#paint0_linear_9320_2499)" stroke-width="4" class="hover-group" data-group="r2"/>
+            </g>
+            <defs>
+                <filter id="filter0_d_9320_2499" x="0" y="0" width="287" height="94.5" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                    <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                    <feOffset dy="6"/>
+                    <feGaussianBlur stdDeviation="3.75"/>
+                    <feComposite in2="hardAlpha" operator="out"/>
+                    <feColorMatrix type="matrix" values="0 0 0 0 0.827233 0 0 0 0 1 0 0 0 0 0.687988 0 0 0 1 0"/>
+                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9320_2499"/>
+                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9320_2499" result="shape"/>
+                </filter>
+                <linearGradient id="paint0_linear_9320_2499" x1="7.49993" y1="57.372" x2="311.342" y2="57.372" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#4A8628"/>
+                    <stop offset="1" stop-color="#EDFFE2"/>
+                </linearGradient>
+            </defs>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="66" viewBox="0 0 64 66" fill="none" class="hero-tag-icon hero-tag-right-icon-2 hover-group" data-group="r2">
+            <circle cx="32" cy="32" r="32" fill="#B3D4A0"/>
+            <g filter="url(#filter0_d_9320_2511)">
+                <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+            </g>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M42 19C44.2091 19 46 20.7909 46 23V43C46 45.14 44.3194 46.8879 42.2061 46.9951L42 47L21.7939 46.9951C19.7488 46.8913 18.1087 45.2512 18.0049 43.2061L18 34.7256L18.9561 36.04C19.507 36.7975 20.2179 37.345 21 37.6846V40.1719L23.0742 38.0967C24.572 38.0749 26.0618 37.3913 27.0439 36.041L32.0176 29.2021C32.0553 29.1503 32.0903 29.0965 32.127 29.0439L39.1719 22H33.9463C33.8441 20.9532 33.5931 19.9464 33.2178 19H42ZM22.8281 44H28.6719L34.9219 37.75L32 34.8281L22.8281 44ZM34.3281 44H41.1719L37.75 40.5781L34.3281 44ZM34.8281 32L43 40.1719V23.8281L34.8281 32Z" fill="#6A7661"/>
+            <path d="M23 21C24.1046 21 25 21.8954 25 23C25 24.1046 24.1046 25 23 25C21.8954 25 21 24.1046 21 23C21 21.8954 21.8954 21 23 21Z" fill="#6A7661"/>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M23 15C27.4181 15.0001 30.9999 18.6619 31 23.0801L30.9941 23.3721C30.9366 24.8289 30.4493 26.257 29.5908 27.4375L24.6172 34.2764L24.54 34.376C23.7437 35.3409 22.2564 35.3408 21.46 34.376L21.3828 34.2764L16.4092 27.4375C15.4934 26.1783 15 24.6371 15 23.0801C15.0001 18.6619 18.5818 15 23 15ZM23 18C20.2774 18 18.0001 20.2797 18 23.0801C18 24.0131 18.2981 24.9345 18.835 25.6729L23 31.3994L27.165 25.6729C27.7019 24.9345 28 24.0131 28 23.0801C27.9999 20.2797 25.7226 18.0001 23 18Z" fill="#6A7661"/>
+            <defs>
+                <filter id="filter0_d_9320_2511" x="2" y="6" width="60" height="60" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                    <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                    <feOffset dy="4"/>
+                    <feGaussianBlur stdDeviation="2"/>
+                    <feComposite in2="hardAlpha" operator="out"/>
+                    <feColorMatrix type="matrix" values="0 0 0 0 0.290196 0 0 0 0 0.52549 0 0 0 0 0.156863 0 0 0 0.61 0"/>
+                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9320_2511"/>
+                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9320_2511" result="shape"/>
+                </filter>
+            </defs>
+        </svg>
+        <div class="hero-tag-icon-label hero-tag-right-icon-label-2 hover-group" data-group="r2">Maps</div>
+        <div class="hero-line-dot hero-tag-right-svg-2 dot-r2" data-group="r2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
+                <circle cx="7.5" cy="7.5" r="5.5" fill="#FAFBFD" stroke="#7C95B0" stroke-width="4"/>
+            </svg>
+        </div>
+
+        <!-- Group R3 -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="258" height="223" viewBox="0 0 258 223" fill="none" class="hero-tag-svg hero-tag-right-svg-3">
+            <g filter="url(#filter0_d_9320_2500)">
+                <path d="M37.49998 3.5C64.5281 3.5 95.8279 23.2928 110.563 54.3464L158.753 155.904C173.488 186.957 204.787 206.75 239.16 206.75H250.031" stroke="url(#paint0_linear_9320_2500)" stroke-width="4" class="hover-group" data-group="r3"/>
+            </g>
+            <defs>
+                <filter id="filter0_d_9320_2500" x="0" y="0" width="257.531" height="222.25" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                    <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                    <feOffset dy="6"/>
+                    <feGaussianBlur stdDeviation="3.75"/>
+                    <feComposite in2="hardAlpha" operator="out"/>
+                    <feColorMatrix type="matrix" values="0 0 0 0 0.827233 0 0 0 0 1 0 0 0 0 0.687988 0 0 0 1 0"/>
+                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9320_2500"/>
+                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9320_2500" result="shape"/>
+                </filter>
+                <linearGradient id="paint0_linear_9320_2500" x1="7.49993" y1="57.372" x2="311.342" y2="57.372" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#4A8628"/>
+                    <stop offset="1" stop-color="#EDFFE2"/>
+                </linearGradient>
+            </defs>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="66" viewBox="0 0 64 66" fill="none" class="hero-tag-icon hero-tag-right-icon-3 hover-group" data-group="r3">
+            <circle cx="32" cy="32" r="32" fill="#B3D4A0"/>
+            <g filter="url(#filter0_d_9320_2515)">
+                <circle cx="32" cy="32" r="23" fill="#FFFFFD"/>
+            </g>
+            <g filter="url(#filter1_d_9320_2515)">
+                <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+            </g>
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M41.5 16C42.3284 16 43 16.6716 43 17.5V19L43.2568 19.0068C45.8989 19.1405 48 21.3247 48 24V43C48 45.7614 45.7614 48 43 48H21C18.3247 48 16.1405 45.8989 16.0068 43.2568L16 43V24C16 21.3247 18.1011 19.1405 20.7432 19.0068L21 19V17.5C21 16.6716 21.6716 16 22.5 16C23.3284 16 24 16.6716 24 17.5V19H31V17.5C31 16.6716 31.6716 16 32.5 16C33.3284 16 34 16.6716 34 17.5V19H40V17.5C40 16.6716 40.6716 16 41.5 16ZM19 43C19 44.1046 19.8954 45 21 45H43C44.1046 45 45 44.1046 45 43V29.5H19V43ZM24 22.5C24 23.3284 23.3284 24 22.5 24C21.6716 24 21 23.3284 21 22.5V22C19.8954 22 19 22.8954 19 24V26.5H45V24C45 22.8954 44.1046 22 43 22V22.5C43 23.3284 42.3284 24 41.5 24C40.6716 24 40 23.3284 40 22.5V22H34V22.5C34 23.3284 33.3284 24 32.5 24C31.6716 24 31 23.3284 31 22.5V22H24V22.5Z" fill="#6A7661"/>
+            <path d="M32.5002 32C33.3284 32.0002 34.0002 32.6717 34.0002 33.5V41.5C34.0002 42.3283 33.3284 42.9998 32.5002 43C31.6717 43 31.0002 42.3284 31.0002 41.5V36.2764L30.3478 37.0742C30.1273 37.3436 29.7975 37.5 29.4494 37.5C28.4702 37.4998 27.9308 36.3615 28.551 35.6035L31.1515 32.4258C31.372 32.1563 31.7018 32 32.05 32C32.2013 32 32.3486 32 32.5002 32Z" fill="#6A7661"/>
+            <defs>
+                <filter id="filter0_d_9320_2515" x="5" y="9" width="54" height="54" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                    <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                    <feOffset dy="4"/>
+                    <feGaussianBlur stdDeviation="2"/>
+                    <feComposite in2="hardAlpha" operator="out"/>
+                    <feColorMatrix type="matrix" values="0 0 0 0 0.290196 0 0 0 0 0.52549 0 0 0 0 0.156863 0 0 0 0.61 0"/>
+                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9320_2515"/>
+                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9320_2515" result="shape"/>
+                </filter>
+                <filter id="filter1_d_9320_2515" x="2" y="6" width="60" height="60" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                    <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                    <feOffset dy="4"/>
+                    <feGaussianBlur stdDeviation="2"/>
+                    <feComposite in2="hardAlpha" operator="out"/>
+                    <feColorMatrix type="matrix" values="0 0 0 0 0.290196 0 0 0 0 0.52549 0 0 0 0 0.156863 0 0 0 0.61 0"/>
+                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9320_2515"/>
+                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9320_2515" result="shape"/>
+                </filter>
+            </defs>
+        </svg>
+        <div class="hero-tag-icon-label hero-tag-right-icon-label-3 hover-group" data-group="r3">Site Optimization</div>
+        <div class="hero-line-dot hero-tag-right-svg-3 dot-r3" data-group="r3">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
+                <circle cx="7.5" cy="7.5" r="5.5" fill="#FAFBFD" stroke="#7C95B0" stroke-width="4"/>
+            </svg>
+        </div>
+
+        <!-- Group R4 -->
+        <svg xmlns="http://www.w3.org/2000/svg" width="287" height="95" viewBox="0 0 287 95" fill="none" class="hero-tag-svg hero-tag-right-svg-4">
+            <g filter="url(#filter0_d_r4)">
+                <path d="M37.5 79H55.7428C75.6303 79 94.9447 72.3391 110.604 60.08L158.711 22.42C174.371 10.1609 193.685 3.5 213.573 3.5H279.5" stroke="url(#paint0_linear_r4)" stroke-width="4" class="hover-group" data-group="r4"/>
+            </g>
+            <defs>
+                <filter id="filter0_d_r4" x="0" y="0" width="287" height="94.5" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                    <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                    <feOffset dy="6"/>
+                    <feGaussianBlur stdDeviation="3.75"/>
+                    <feComposite in2="hardAlpha" operator="out"/>
+                    <feColorMatrix type="matrix" values="0 0 0 0 0.827233 0 0 0 0 1 0 0 0 0 0.687988 0 0 0 1 0"/>
+                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_r4"/>
+                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_r4" result="shape"/>
+                </filter>
+                <linearGradient id="paint0_linear_r4" x1="7.49993" y1="25.128" x2="311.342" y2="25.128" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#4A8628"/>
+                    <stop offset="1" stop-color="#EDFFE2"/>
+                </linearGradient>
+            </defs>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="66" viewBox="0 0 64 66" fill="none" class="hero-tag-icon hero-tag-right-icon-4 hover-group" data-group="r4">
+            <circle cx="32" cy="32" r="32" fill="#B3D4A0"/>
+            <g filter="url(#filter0_d_r4_icon)">
+                <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+            </g>
+            <g transform="translate(17.5, 16)">
+                <path d="M28.6398 16.2762L12.9987 0.366334C12.5188 -0.121851 11.7407 -0.121851 11.2609 0.366334C10.781 0.854519 10.7809 1.64595 11.2609 2.13408L12.3889 3.28151L6.71001 15.6019L1.07806 21.3306C-0.359355 22.7927 -0.359355 25.1718 1.07806 26.6339L2.816 28.4017C4.2568 29.8673 6.58891 29.8673 8.0297 28.4017L9.46958 26.9371L13.3358 30.8698C14.0355 31.5988 14.9718 32 15.9737 32C18.0065 32 19.6603 30.3178 19.6603 28.25C19.6603 27.231 19.2658 26.2785 18.5491 25.5668L15.0522 22.0098L25.7739 16.8964L26.902 18.0439C27.3819 18.5321 28.16 18.5321 28.6398 18.0439C29.1197 17.5558 29.1197 16.7643 28.6398 16.2762ZM6.29176 26.634C5.81152 27.1225 5.03419 27.1225 4.55388 26.634L2.81594 24.8662C2.3368 24.3788 2.3368 23.5858 2.81594 23.0984L7.73121 18.0987L11.207 21.6342L6.29176 26.634ZM16.8296 27.3533C17.0701 27.5908 17.2025 27.9093 17.2025 28.2501C17.2025 28.9394 16.6512 29.5001 15.9736 29.5001C15.6385 29.5001 15.3254 29.3655 15.0919 29.1209C15.0877 29.1165 11.2073 25.1694 11.2073 25.1694L12.9448 23.402C12.9448 23.402 16.8253 27.349 16.8296 27.3533ZM13.2041 20.1301L9.20992 16.0673L14.2369 5.16131L23.9258 15.0166L13.2041 20.1301Z" fill="#6A7661"/>
+                <path d="M24.1742 8.11154C24.4819 8.7268 25.2218 8.97186 25.8267 8.65886L28.3281 7.36442C28.933 7.05135 29.1739 6.29879 28.8661 5.68347C28.5584 5.06816 27.8186 4.82316 27.2136 5.13616L24.7122 6.4306C24.1073 6.74367 23.8664 7.49623 24.1742 8.11154Z" fill="#6A7661"/>
+                <path d="M21.0257 4.90885C21.6306 5.22185 22.3704 4.97678 22.6782 4.36147L23.9507 1.81702C24.2585 1.20171 24.0175 0.449143 23.4126 0.136142C22.8077 -0.176859 22.0679 0.0681422 21.7601 0.683519L20.4876 3.22796C20.1798 3.84328 20.4208 4.59584 21.0257 4.90885Z" fill="#6A7661"/>
+            </g>
+            <defs>
+                <filter id="filter0_d_r4_icon" x="2" y="6" width="60" height="60" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                    <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                    <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                    <feOffset dy="4"/>
+                    <feGaussianBlur stdDeviation="2"/>
+                    <feComposite in2="hardAlpha" operator="out"/>
+                    <feColorMatrix type="matrix" values="0 0 0 0 0.290196 0 0 0 0 0.52549 0 0 0 0 0.156863 0 0 0 0.61 0"/>
+                    <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_r4_icon"/>
+                    <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_r4_icon" result="shape"/>
+                </filter>
+            </defs>
+        </svg>
+        <div class="hero-tag-icon-label hero-tag-right-icon-label-4 hover-group" data-group="r4">Marketing</div>
+        <div class="hero-line-dot hero-tag-right-svg-4 dot-r4" data-group="r4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
+                <circle cx="7.5" cy="7.5" r="5.5" fill="#FAFBFD" stroke="#7C95B0" stroke-width="4"/>
+            </svg>
+        </div>
+
+        Ongoing
+    </div>
+
+    <!-- Center SVG -->
+    <svg width="220" height="220" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg" class="hero-center-svg">
+        <g filter="url(#filter0_g_9320_2488)">
+            <circle cx="109.754" cy="109.754" r="109.754" transform="rotate(180 109.754 109.754)" fill="white" fill-opacity="0.01"/>
+        </g>
+        <g clip-path="url(#hub-circle-clip)">
+            <path d="M 109.754 0.5 A 109.254 109.254 0 0 0 109.754 219.008 Z" fill="url(#paint_blue_left)"/>
+            <path d="M 109.754 0.5 A 109.254 109.254 0 0 1 109.754 219.008 Z" fill="url(#paint0_linear_9320_2488)"/>
+        </g>
+        <circle cx="109.754" cy="109.754" r="109.254" transform="rotate(180 109.754 109.754)" stroke="#E9EEF4"/>
+        <ellipse cx="109.758" cy="109.063" rx="76.5" ry="76" fill="white" fill-opacity="0.2"/>
+        <path d="M109.758 33.5632C151.735 33.5632 185.758 67.3688 185.758 109.063C185.758 150.758 151.735 184.563 109.758 184.563C67.7816 184.563 33.7583 150.758 33.7583 109.063C33.7583 67.3688 67.7816 33.5632 109.758 33.5632Z" stroke="white" stroke-opacity="0.49"/>
+        <circle cx="110.258" cy="110.063" r="47" fill="url(#paint2_radial_9320_2488)"/>
+        <g filter="url(#filter3_d_9320_2488)">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M113.292 82.0632C113.917 82.0632 114.494 82.3021 114.933 82.7003C115.371 83.0986 115.672 83.6564 115.746 84.2937L116.137 87.7103C117.079 87.9684 118.002 88.2892 118.896 88.6711C119.793 89.0532 120.663 89.496 121.502 89.999L124.091 87.9073C124.585 87.509 125.185 87.3288 125.771 87.3627C126.357 87.3967 126.932 87.644 127.376 88.0967L131.491 92.2892C131.93 92.7419 132.171 93.3271 132.206 93.9244C132.241 94.5216 132.068 95.1312 131.677 95.6342L129.565 98.351C130.015 99.1683 130.416 100.013 130.763 100.88C131.109 101.747 131.403 102.639 131.638 103.551L135.068 103.956C135.694 104.032 136.242 104.337 136.633 104.784C137.024 105.231 137.258 105.818 137.258 106.455V112.401C137.258 113.038 137.024 113.625 136.633 114.072C136.242 114.519 135.694 114.825 135.068 114.9L131.591 115.307C131.348 116.227 131.043 117.129 130.681 118.006C130.321 118.884 129.901 119.737 129.432 120.564L131.688 123.482C132.078 123.985 132.255 124.594 132.222 125.192C132.189 125.789 131.947 126.374 131.503 126.827L127.379 131.028C126.935 131.475 126.36 131.722 125.774 131.758C125.186 131.793 124.587 131.616 124.094 131.218L121.192 128.878C120.367 129.352 119.514 129.769 118.639 130.13C117.763 130.491 116.861 130.795 115.943 131.039L115.513 134.833C115.439 135.47 115.138 136.028 114.7 136.426C114.261 136.824 113.685 137.063 113.059 137.063H107.225C106.599 137.063 106.023 136.824 105.584 136.426C105.145 136.028 104.845 135.47 104.771 134.833L104.77 134.837L104.321 130.904C103.466 130.655 102.627 130.354 101.811 130.002C100.992 129.649 100.196 129.246 99.4243 128.793L96.4243 131.213C95.9306 131.611 95.3305 131.792 94.7441 131.758C94.1579 131.724 93.5831 131.476 93.1387 131.024L89.0151 126.822C88.5767 126.37 88.3351 125.784 88.3003 125.187C88.2655 124.588 88.4396 123.979 88.8306 123.476L91.2241 120.399C90.8042 119.643 90.4278 118.859 90.0962 118.058C89.7662 117.258 89.4795 116.436 89.2407 115.6L85.4482 115.152C84.8227 115.077 84.2747 114.771 83.8838 114.324C83.4929 113.877 83.2584 113.29 83.2583 112.653V106.708C83.2584 106.071 83.493 105.483 83.8838 105.037C84.2747 104.59 84.8228 104.284 85.4482 104.209L89.0444 103.791C89.2703 102.875 89.5523 101.975 89.8926 101.099C90.2314 100.223 90.6288 99.3695 91.0776 98.5435L88.8306 95.6461C88.4396 95.1431 88.2626 94.5322 88.2959 93.9348C88.3292 93.3376 88.5709 92.7524 89.0151 92.2996L93.1387 88.0982C93.5831 87.6514 94.1564 87.4041 94.7441 87.3686C95.332 87.3332 95.9306 87.5105 96.4243 87.9087L99.1108 90.0811C99.9709 89.5574 100.862 89.0963 101.781 88.701C102.701 88.3042 103.647 87.9744 104.614 87.7103L105.004 84.2937C105.078 83.6564 105.378 83.0986 105.817 82.7003C106.256 82.3021 106.832 82.0632 107.458 82.0632H113.292ZM110.258 97.341C103.631 97.341 98.2583 102.813 98.2583 109.563C98.2583 116.313 103.631 121.785 110.258 121.785C116.886 121.785 122.258 116.313 122.258 109.563C122.258 102.813 116.886 97.341 110.258 97.341Z" fill="#EAEAEA"/>
+        </g>
+        <defs>
+            <filter id="filter0_g_9320_2488" x="-6.9" y="-6.89994" width="233.308" height="233.308" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+                <feTurbulence type="fractalNoise" baseFrequency="0.043290041387081146 0.043290041387081146" numOctaves="3" seed="2678" result="displacementX" />
+                <feTurbulence type="fractalNoise" baseFrequency="0.043290041387081146 0.043290041387081146" numOctaves="3" seed="2679" result="displacementY" />
+                <feColorMatrix in="displacementX" type="matrix" values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="displacementXRed" />
+                <feColorMatrix in="displacementY" type="matrix" values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" />
+                <feComposite in="displacementXRed" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
+                <feDisplacementMap in="shape" scale="13.800000190734863" xChannelSelector="R" yChannelSelector="G" width="100%" height="100%" />
+                <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" />
+                <feComponentTransfer result="sourceDisplacedAlpha">
+                    <feFuncA type="gamma" exponent="0.2" />
+                </feComponentTransfer>
+                <feColorMatrix in="shape" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0" />
+                <feComponentTransfer result="inputSourceAlpha">
+                    <feFuncA type="gamma" exponent="0.2" />
+                </feComponentTransfer>
+                <feComposite in="sourceDisplacedAlpha" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" result="displacementAlphasMultiplied"/>
+                <feComposite in="displacementAlphasMultiplied"  operator="arithmetic" k1="0" k2="0" k3="-0.5" k4="0.5" result="centeringAdjustment"/>
+                <feComposite in="displacementX" in2="displacementAlphasMultiplied" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" />
+                <feComposite in="centeringAdjustment" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" />
+                <feColorMatrix  type="matrix" values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="displacementXFinal" />
+                <feComposite in="displacementY" in2="displacementAlphasMultiplied" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" />
+                <feComposite in="centeringAdjustment" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" />
+                <feColorMatrix  type="matrix" values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="displacementYFinal" />
+                <feComposite in="displacementXFinal" in2="displacementYFinal" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" />
+                <feComposite in2="displacementAlphasMultiplied" operator="in" result="displacementMap" />
+                <feFlood flood-color="rgb(127, 127, 127)" flood-opacity="1"/>
+                <feComposite in2="displacementAlphasMultiplied" operator="out" />
+                <feComposite in2="displacementMap" operator="over" result="displacementMapWithBg"/>
+                <feDisplacementMap in="shape" scale="13.800000190734863" xChannelSelector="R" yChannelSelector="G" width="100%" height="100%" result="displacedImage" />
+                <feColorMatrix in="shape" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 127 0" result="imageOpaque" />
+                <feDisplacementMap in="imageOpaque" in2="displacementMapWithBg" scale="13.800000190734863" xChannelSelector="R" yChannelSelector="G" width="100%" height="100%" result="displacedImageOpaque" />
+                <feColorMatrix in="displacedImage" type="matrix" values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 127 0" result="displacedImageRed" />
+                <feColorMatrix in="shape" type="matrix" values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 127 0" />
+                <feComposite in="displacedImageRed"  operator="atop" result="transparencyRedMap"/>
+                <feColorMatrix in="transparencyRedMap" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="transparencyAlphaMap" />
+                <feComposite in="displacedImageOpaque" in2="imageOpaque" operator="over" />
+                <feComposite in2="transparencyAlphaMap" operator="in" result="effect1_texture_9320_2488"/>
+            </filter>
+            <clipPath id="hub-circle-clip">
+                <circle cx="109.754" cy="109.754" r="109.254"/>
+            </clipPath>
+            <filter id="filter3_d_9320_2488" x="79.2583" y="78.0632" width="62" height="63" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+            <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+            <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+            <feOffset/>
+            <feGaussianBlur stdDeviation="2"/>
+            <feComposite in2="hardAlpha" operator="out"/>
+            <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.25 0"/>
+            <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9320_2488"/>
+            <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9320_2488" result="shape"/>
+        </filter>
+            <linearGradient id="paint0_linear_9320_2488" x1="79.4885" y1="2.32814" x2="109.754" y2="219.509" gradientUnits="userSpaceOnUse">
+                <animateTransform attributeName="gradientTransform" type="rotate" from="0 110 110" to="360 110 110" dur="10s" repeatCount="indefinite" />
+                <stop stop-color="#80C34A" stop-opacity="0"/>
+                <stop offset="1" stop-color="#80C34A"/>
+            </linearGradient>
+            <radialGradient id="paint2_radial_9320_2488" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(110.258 110.063) rotate(90) scale(47)">
+                <stop stop-color="#184B7F"/>
+                <stop offset="1" stop-color="#0D1F40"/>
+            </radialGradient>
+            <linearGradient id="paint_blue_left" x1="109.754" y1="3.74" x2="40" y2="219.509" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#1266B5" stop-opacity="0.15"/>
+                <stop offset="0.5" stop-color="#2563A8" stop-opacity="0.7"/>
+                <stop offset="1" stop-color="#184B7F"/>
+            </linearGradient>
+        </defs>
+    </svg>
+
+    <div class="hero-container">
+        <h1 class="hero-title">
+            Website & Marketing<br>
+            Built as <span class="accent">One System</span>
+        </h1>
+        <p class="hero-description">
+            Your website and marketing aren’t separate, they are the same thing.<br>
+            Maps, Ads, AI, and SEO all depend on how the site is built
+        </p>
+    </div>
+
+    <!-- Stack Section -->
+    <div class="hero-stack">
+        <div class="stack-pill">Stack</div>
+
+        <!-- Lines SVG -->
+        <svg class="stack-lines-svg" viewBox="0 0 700 220">
+            <path d="M 100 110 L 600 110" stroke="#E9EEF4" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M 200 110 L 200 50" stroke="#E9EEF4" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M 275 110 L 275 170" stroke="#E9EEF4" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M 350 110 L 350 40" stroke="#E9EEF4" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M 425 110 L 425 170" stroke="#E9EEF4" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M 500 110 L 500 50" stroke="#E9EEF4" stroke-width="2" fill="none" stroke-linecap="round"/>
+        </svg>
+
+        <!-- Icons -->
+        <!-- Google G -->
+        <div class="stack-icon-container" style="left: 100px; top: 110px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60" fill="none">
+                <g filter="url(#filter0_d_9397_2659)">
+                    <rect x="5" y="3" width="50" height="50" rx="15" fill="#F6F6F6" stroke="white" stroke-width="2"/>
+                    <mask id="path-2-outside-1_9397_2659" maskUnits="userSpaceOnUse" x="15" y="13" width="30" height="30" fill="black">
+                        <rect fill="white" x="15" y="13" width="30" height="30"/>
+                        <path d="M22.7079 31.9601L27.4305 29.3119L27.5099 29.0819L27.4305 28.954H27.2004L26.4111 28.9054L23.7127 28.8325L21.3725 28.7353L19.1053 28.6138L18.5348 28.4924L18 27.7878L18.0551 27.4364L18.5348 27.114L19.222 27.174L23.0191 27.4347L24.6722 27.5319L27.1209 27.7862H27.5099L27.565 27.6291L27.4321 27.5319L27.3284 27.4347L24.9704 25.8378L22.4179 24.1501L21.0808 23.1783L20.358 22.6859L19.9934 22.2243L19.8362 21.2169L20.4925 20.4945L21.3742 20.5545L21.5994 20.6144L22.4924 21.3011L24.3999 22.7766L26.8908 24.6101L27.2555 24.9129L27.4013 24.8093L27.4191 24.7364L27.2555 24.4627L25.9006 22.0154L24.455 19.526L23.8116 18.4943L23.6414 17.8756C23.5815 17.6213 23.5377 17.4075 23.5377 17.1467L24.2848 16.1328L24.6981 16L25.6948 16.1328L26.1145 16.4972L26.7336 17.9128L27.7368 20.1415L29.2926 23.1718L29.748 24.0707L29.9911 24.9032L30.0818 25.1575H30.239V25.0117L30.3671 23.3046L30.6037 21.2088L30.8338 18.5121L30.9132 17.7525L31.2892 16.8422L32.0363 16.3498L32.6198 16.6284L33.0995 17.3152L33.033 17.7589L32.7478 19.6118L32.1887 22.5142L31.824 24.4578H32.0363L32.2794 24.2149L33.2631 22.9094L34.9162 20.8444L35.6455 20.0248L36.4963 19.1194L37.0425 18.6886H38.0748L38.8349 19.8175L38.4946 20.9837L37.4314 22.3312L36.5498 23.4731L35.2857 25.1737L34.4965 26.5342L34.5694 26.6427L34.7574 26.6249L37.6129 26.0175L39.1558 25.739L40.9968 25.4231L41.8298 25.8118L41.9206 26.207L41.5932 27.0153L39.6241 27.5011L37.3147 27.9628L33.8757 28.7758L33.8336 28.8066L33.8822 28.8665L35.4316 29.0123L36.0944 29.0479H37.7167L40.7375 29.273L41.5268 29.7946L42 30.4327L41.9206 30.9186L40.7051 31.5373L35.2371 30.2384L33.9244 29.9112H33.7429V30.0197L34.8368 31.0887L36.8415 32.8978L39.3519 35.2301L39.4799 35.8067L39.1574 36.2618L38.8171 36.2133L36.6114 34.5547L35.7605 33.8081L33.8336 32.1868H33.7056V32.3569L34.1496 33.0063L36.4947 36.5291L36.6162 37.6094L36.4461 37.9609L35.8383 38.173L35.1706 38.0516L33.798 36.1258L32.3815 33.9571L31.239 32.0135L31.0996 32.0929L30.4254 39.3505L30.1094 39.7214L29.3801 40L28.7724 39.5384L28.4499 38.7917L28.7724 37.3162L29.1613 35.3905L29.4773 33.8599L29.7626 31.9584L29.9327 31.3268L29.9214 31.2847L29.782 31.3025L28.3478 33.2703L26.1664 36.2165L24.4404 38.0629L24.0271 38.2265L23.3108 37.8556L23.3773 37.1931L23.7776 36.6036L26.1664 33.5667L27.6071 31.6847L28.5374 30.5979L28.5309 30.4408H28.4758L22.131 34.558L21.0014 34.7037L20.5152 34.2486L20.5752 33.502L20.8053 33.259L22.7128 31.9471L22.7063 31.9536L22.7079 31.9601Z"/>
+                    </mask>
+                    <path d="M22.7079 31.9601L27.4305 29.3119L27.5099 29.0819L27.4305 28.954H27.2004L26.4111 28.9054L23.7127 28.8325L21.3725 28.7353L19.1053 28.6138L18.5348 28.4924L18 27.7878L18.0551 27.4364L18.5348 27.114L19.222 27.174L23.0191 27.4347L24.6722 27.5319L27.1209 27.7862H27.5099L27.565 27.6291L27.4321 27.5319L27.3284 27.4347L24.9704 25.8378L22.4179 24.1501L21.0808 23.1783L20.358 22.6859L19.9934 22.2243L19.8362 21.2169L20.4925 20.4945L21.3742 20.5545L21.5994 20.6144L22.4924 21.3011L24.3999 22.7766L26.8908 24.6101L27.2555 24.9129L27.4013 24.8093L27.4191 24.7364L27.2555 24.4627L25.9006 22.0154L24.455 19.526L23.8116 18.4943L23.6414 17.8756C23.5815 17.6213 23.5377 17.4075 23.5377 17.1467L24.2848 16.1328L24.6981 16L25.6948 16.1328L26.1145 16.4972L26.7336 17.9128L27.7368 20.1415L29.2926 23.1718L29.748 24.0707L29.9911 24.9032L30.0818 25.1575H30.239V25.0117L30.3671 23.3046L30.6037 21.2088L30.8338 18.5121L30.9132 17.7525L31.2892 16.8422L32.0363 16.3498L32.6198 16.6284L33.0995 17.3152L33.033 17.7589L32.7478 19.6118L32.1887 22.5142L31.824 24.4578H32.0363L32.2794 24.2149L33.2631 22.9094L34.9162 20.8444L35.6455 20.0248L36.4963 19.1194L37.0425 18.6886H38.0748L38.8349 19.8175L38.4946 20.9837L37.4314 22.3312L36.5498 23.4731L35.2857 25.1737L34.4965 26.5342L34.5694 26.6427L34.7574 26.6249L37.6129 26.0175L39.1558 25.739L40.9968 25.4231L41.8298 25.8118L41.9206 26.207L41.5932 27.0153L39.6241 27.5011L37.3147 27.9628L33.8757 28.7758L33.8336 28.8066L33.8822 28.8665L35.4316 29.0123L36.0944 29.0479H37.7167L40.7375 29.273L41.5268 29.7946L42 30.4327L41.9206 30.9186L40.7051 31.5373L35.2371 30.2384L33.9244 29.9112H33.7429V30.0197L34.8368 31.0887L36.8415 32.8978L39.3519 35.2301L39.4799 35.8067L39.1574 36.2618L38.8171 36.2133L36.6114 34.5547L35.7605 33.8081L33.8336 32.1868H33.7056V32.3569L34.1496 33.0063L36.4947 36.5291L36.6162 37.6094L36.4461 37.9609L35.8383 38.173L35.1706 38.0516L33.798 36.1258L32.3815 33.9571L31.239 32.0135L31.0996 32.0929L30.4254 39.3505L30.1094 39.7214L29.3801 40L28.7724 39.5384L28.4499 38.7917L28.7724 37.3162L29.1613 35.3905L29.4773 33.8599L29.7626 31.9584L29.9327 31.3268L29.9214 31.2847L29.782 31.3025L28.3478 33.2703L26.1664 36.2165L24.4404 38.0629L24.0271 38.2265L23.3108 37.8556L23.3773 37.1931L23.7776 36.6036L26.1664 33.5667L27.6071 31.6847L28.5374 30.5979L28.5309 30.4408H28.4758L22.131 34.558L21.0014 34.7037L20.5152 34.2486L20.5752 33.502L20.8053 33.259L22.7128 31.9471L22.7063 31.9536L22.7079 31.9601Z" fill="#E1E1E1"/>
+                    <path d="M22.7079 31.9601L27.4305 29.3119L27.5099 29.0819L27.4305 28.954H27.2004L26.4111 28.9054L23.7127 28.8325L21.3725 28.7353L19.1053 28.6138L18.5348 28.4924L18 27.7878L18.0551 27.4364L18.5348 27.114L19.222 27.174L23.0191 27.4347L24.6722 27.5319L27.1209 27.7862H27.5099L27.565 27.6291L27.4321 27.5319L27.3284 27.4347L24.9704 25.8378L22.4179 24.1501L21.0808 23.1783L20.358 22.6859L19.9934 22.2243L19.8362 21.2169L20.4925 20.4945L21.3742 20.5545L21.5994 20.6144L22.4924 21.3011L24.3999 22.7766L26.8908 24.6101L27.2555 24.9129L27.4013 24.8093L27.4191 24.7364L27.2555 24.4627L25.9006 22.0154L24.455 19.526L23.8116 18.4943L23.6414 17.8756C23.5815 17.6213 23.5377 17.4075 23.5377 17.1467L24.2848 16.1328L24.6981 16L25.6948 16.1328L26.1145 16.4972L26.7336 17.9128L27.7368 20.1415L29.2926 23.1718L29.748 24.0707L29.9911 24.9032L30.0818 25.1575H30.239V25.0117L30.3671 23.3046L30.6037 21.2088L30.8338 18.5121L30.9132 17.7525L31.2892 16.8422L32.0363 16.3498L32.6198 16.6284L33.0995 17.3152L33.033 17.7589L32.7478 19.6118L32.1887 22.5142L31.824 24.4578H32.0363L32.2794 24.2149L33.2631 22.9094L34.9162 20.8444L35.6455 20.0248L36.4963 19.1194L37.0425 18.6886H38.0748L38.8349 19.8175L38.4946 20.9837L37.4314 22.3312L36.5498 23.4731L35.2857 25.1737L34.4965 26.5342L34.5694 26.6427L34.7574 26.6249L37.6129 26.0175L39.1558 25.739L40.9968 25.4231L41.8298 25.8118L41.9206 26.207L41.5932 27.0153L39.6241 27.5011L37.3147 27.9628L33.8757 28.7758L33.8336 28.8066L33.8822 28.8665L35.4316 29.0123L36.0944 29.0479H37.7167L40.7375 29.273L41.5268 29.7946L42 30.4327L41.9206 30.9186L40.7051 31.5373L35.2371 30.2384L33.9244 29.9112H33.7429V30.0197L34.8368 31.0887L36.8415 32.8978L39.3519 35.2301L39.4799 35.8067L39.1574 36.2618L38.8171 36.2133L36.6114 34.5547L35.7605 33.8081L33.8336 32.1868H33.7056V32.3569L34.1496 33.0063L36.4947 36.5291L36.6162 37.6094L36.4461 37.9609L35.8383 38.173L35.1706 38.0516L33.798 36.1258L32.3815 33.9571L31.239 32.0135L31.0996 32.0929L30.4254 39.3505L30.1094 39.7214L29.3801 40L28.7724 39.5384L28.4499 38.7917L28.7724 37.3162L29.1613 35.3905L29.4773 33.8599L29.7626 31.9584L29.9327 31.3268L29.9214 31.2847L29.782 31.3025L28.3478 33.2703L26.1664 36.2165L24.4404 38.0629L24.0271 38.2265L23.3108 37.8556L23.3773 37.1931L23.7776 36.6036L26.1664 33.5667L27.6071 31.6847L28.5374 30.5979L28.5309 30.4408H28.4758L22.131 34.558L21.0014 34.7037L20.5152 34.2486L20.5752 33.502L20.8053 33.259L22.7128 31.9471L22.7063 31.9536L22.7079 31.9601Z" stroke="#C1C1C1" stroke-width="4" mask="url(#path-2-outside-1_9397_2659)"/>
+                </g>
+                <defs>
+                    <filter id="filter0_d_9397_2659" x="0" y="0" width="60" height="60" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                        <feOffset dy="2"/>
+                        <feGaussianBlur stdDeviation="2"/>
+                        <feComposite in2="hardAlpha" operator="out"/>
+                        <feColorMatrix type="matrix" values="0 0 0 0 0.913725 0 0 0 0 0.917647 0 0 0 0 0.921569 0 0 0 1 0"/>
+                        <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9397_2659"/>
+                        <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9397_2659" result="shape"/>
+                    </filter>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- Google Ads -->
+        <div class="stack-icon-container" style="left: 200px; top: 50px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60" fill="none">
+                <g filter="url(#filter0_d_9397_2647)">
+                    <rect x="5" y="3" width="50" height="50" rx="15" fill="#F6F6F6" stroke="white" stroke-width="2"/>
+                    <path d="M24.001 32.2344C25.323 34.127 27.5126 35.375 30 35.375C31.0301 35.375 32.0099 35.1519 32.9023 34.7637L35.5859 37.4473C33.9472 38.4292 32.0411 39 30 39C26.5219 39 23.417 37.3691 21.4072 34.8281L24.001 32.2344ZM40.8467 26.1875C40.9462 26.7818 41 27.3905 41 28C41 30.763 39.9641 33.2841 38.2637 35.2148L35.7012 32.6514C36.0518 32.23 36.3623 31.7649 36.6143 31.2549L37.3262 29.8125H30.3438V26.1875H40.8467ZM22.667 27.3408C22.6428 27.5483 22.625 27.7698 22.625 28C22.625 28.2299 22.6428 28.451 22.667 28.6582L19.6455 31.6797C19.2297 30.5282 19 29.291 19 28C19 26.7087 19.2295 25.4711 19.6455 24.3193L22.667 27.3408ZM30 17C32.4544 17 34.8464 17.8348 36.7725 19.3535L34.1846 21.9414C32.9529 21.0804 31.5094 20.625 30 20.625C27.5129 20.625 25.323 21.8724 24.001 23.7646L21.4072 21.1709C23.417 18.6303 26.5222 17 30 17Z" fill="#E1E1E1" stroke="#C1C1C1" stroke-width="2"/>
+                </g>
+                <defs>
+                    <filter id="filter0_d_9397_2647" x="0" y="0" width="60" height="60" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                        <feOffset dy="2"/>
+                        <feGaussianBlur stdDeviation="2"/>
+                        <feComposite in2="hardAlpha" operator="out"/>
+                        <feColorMatrix type="matrix" values="0 0 0 0 0.913725 0 0 0 0 0.917647 0 0 0 0 0.921569 0 0 0 1 0"/>
+                        <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9397_2647"/>
+                        <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9397_2647" result="shape"/>
+                    </filter>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- Zapier -->
+        <div class="stack-icon-container" style="left: 275px; top: 170px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60" fill="none">
+                <g filter="url(#filter0_d_9397_2656)">
+                    <rect x="-1" y="1" width="50" height="50" rx="15" transform="matrix(-1 0 0 1 54 2)" fill="#F6F6F6" stroke="white" stroke-width="2"/>
+                    <path d="M30.0234 15C30.6076 15 31.1854 15.0492 31.751 15.1455C32.0707 15.2 32.3403 15.407 32.4805 15.6963C32.7398 15.5133 33.0766 15.4591 33.3877 15.5684C34.1129 15.8234 34.8065 16.1634 35.4541 16.583C36.5158 17.2709 37.4345 18.1588 38.167 19.1914C38.3571 19.4595 38.3991 19.7966 38.2959 20.0957C38.6117 20.1502 38.8841 20.3515 39.0254 20.6426C39.7985 22.2353 40.1458 23.9958 40.0225 25.7441C39.8878 27.6517 39.191 29.4839 38.0176 31.043L30.8223 40.6016C30.6333 40.8524 30.3375 41 30.0234 41C29.7094 41 29.4135 40.8525 29.2246 40.6016L26.1553 36.5234C25.9839 36.2958 25.923 36.0133 25.9707 35.7461C25.6958 35.7176 25.4425 35.5777 25.2744 35.3545L22.0293 31.043C21.9802 30.9777 21.9338 30.9131 21.8896 30.8516C21.6988 30.5856 21.6532 30.2497 21.7529 29.9512C21.4386 29.8977 21.166 29.6997 21.0234 29.4111C20.4559 28.2618 20.1145 27.0195 20.0244 25.7441C19.8985 23.9595 20.2613 22.1604 21.0693 20.541C21.2231 20.2328 21.3921 19.9339 21.5742 19.6455L21.6338 19.5605C21.7836 19.3704 21.9988 19.2404 22.2393 19.1963C22.2496 19.1944 22.2602 19.193 22.2705 19.1914C22.2689 19.1798 22.2669 19.168 22.2656 19.1562C22.2368 18.8803 22.3236 18.6047 22.5059 18.3955C23.1131 17.6991 23.8145 17.0873 24.5928 16.583C26.1953 15.5447 28.0749 15 30.0234 15ZM31.1377 28.5469C31.1562 28.5736 31.1754 28.6001 31.1914 28.6289L31.292 28.4941C31.241 28.5128 31.1897 28.5305 31.1377 28.5469ZM33.7158 25.1191C33.7144 25.1748 33.7119 25.2301 33.708 25.2852L33.8115 25.1475C33.7788 25.1399 33.7472 25.1298 33.7158 25.1191ZM26.2344 24.8984C26.2671 24.906 26.2987 24.9162 26.3301 24.9268C26.3315 24.8708 26.334 24.8151 26.3379 24.7598L26.2344 24.8984ZM28.7529 21.5518C28.8038 21.5331 28.8553 21.5155 28.9072 21.499C28.8889 21.4724 28.8704 21.4457 28.8545 21.417L28.7529 21.5518Z" fill="#D4D4D4" stroke="#B2B2B2" stroke-width="2" stroke-linejoin="round"/>
+                </g>
+                <defs>
+                    <filter id="filter0_d_9397_2656" x="0" y="0" width="60" height="60" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                        <feOffset dy="2"/>
+                        <feGaussianBlur stdDeviation="2"/>
+                        <feComposite in2="hardAlpha" operator="out"/>
+                        <feColorMatrix type="matrix" values="0 0 0 0 0.913725 0 0 0 0 0.917647 0 0 0 0 0.921569 0 0 0 1 0"/>
+                        <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9397_2656"/>
+                        <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9397_2656" result="shape"/>
+                    </filter>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- Stacked Layers -->
+        <div class="stack-icon-container" style="left: 350px; top: 110px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="52" height="52" viewBox="0 0 52 52" fill="none">
+                <g filter="url(#filter0_d_9397_2670)">
+                    <rect x="5" y="3" width="42" height="42" rx="5" fill="#F6F6F6" stroke="white" stroke-width="2"/>
+                    <path d="M37.8857 29.9453L37.8965 29.9492C38.308 30.0953 38.4612 30.3847 38.4668 30.6289C38.4724 30.8761 38.3306 31.1524 37.9707 31.29L28.0303 35.0898L28.0186 35.0938C26.6956 35.635 25.2174 35.6351 23.8945 35.0938L23.8848 35.0898L14.04 31.2949H14.041C13.435 31.044 13.4328 30.196 14.0352 29.9414L17.8398 28.4932L23.5156 30.6992V30.7002C25.0813 31.3409 26.8318 31.3408 28.3975 30.7002L28.3965 30.6992L34.0723 28.4932L37.8857 29.9453ZM38.1182 23.2656C38.5863 23.4823 38.6738 24.2435 38.0957 24.5625L37.9707 24.6201L33.9775 26.1396L33.9746 26.1406L28.1123 28.4209L28.1035 28.4238C26.7806 28.965 25.3024 28.9651 23.9795 28.4238L23.9717 28.4209L18.1094 26.1406L18.1055 26.1396L14.125 24.625H14.126C13.5182 24.3733 13.5175 23.5205 14.125 23.2686L18.0146 21.7393L23.6943 23.9492V23.9482C25.2551 24.5844 26.9978 24.5843 28.5586 23.9482L28.5596 23.9492L34.2383 21.7393L38.1182 23.2656ZM23.3799 12.9717C24.9568 12.3449 26.7809 12.3405 28.4531 12.9727V12.9736L37.8848 16.6035L37.9053 16.6123L37.9277 16.6182C38.3062 16.7257 38.461 16.996 38.4668 17.2568C38.4727 17.526 38.3202 17.8143 37.9746 17.9482L33.8965 19.4678L33.8896 19.4707L28.0273 21.75L28.0186 21.7539C26.6957 22.2951 25.2174 22.2952 23.8945 21.7539L23.8867 21.75L18.0244 19.4707L18.0176 19.4678L13.9502 17.9521C13.3483 17.6975 13.3497 16.8498 13.9551 16.5986L23.375 12.9736L23.3799 12.9717Z" fill="#D4D4D4" stroke="#B2B2B2"/>
+                </g>
+                <defs>
+                    <filter id="filter0_d_9397_2670" x="0" y="0" width="52" height="52" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                        <feOffset dy="2"/>
+                        <feGaussianBlur stdDeviation="2"/>
+                        <feComposite in2="hardAlpha" operator="out"/>
+                        <feColorMatrix type="matrix" values="0 0 0 0 0.913725 0 0 0 0 0.917647 0 0 0 0 0.921569 0 0 0 1 0"/>
+                        <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9397_2670"/>
+                        <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9397_2670" result="shape"/>
+                    </filter>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- Figma -->
+        <div class="stack-icon-container" style="left: 425px; top: 170px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60" fill="none">
+                <g filter="url(#filter0_d_9397_2662)">
+                    <rect x="-1" y="1" width="50" height="50" rx="15" transform="matrix(-1 0 0 1 54 2)" fill="#F6F6F6" stroke="white" stroke-width="2"/>
+                    <path d="M34.7051 15C37.5418 15 39.9404 17.1855 39.9404 20C39.9404 21.6445 39.1207 23.073 37.874 23.9775C39.1547 24.8794 40 26.329 40 28C40 30.8145 37.6013 33 34.7646 33C33.5556 33 32.4273 32.6013 31.5293 31.9277V36C31.5293 38.8144 29.1315 40.9998 26.2949 41C23.4582 41 21.0596 38.8145 21.0596 36C21.0596 34.3423 21.8918 32.9033 23.1553 32C21.8918 31.0967 21.0596 29.6577 21.0596 28C21.0596 26.3556 21.8784 24.926 23.125 24.0215C21.8449 23.1196 21 21.6705 21 20C21 17.1855 23.3987 15 26.2354 15H34.7051Z" fill="#D4D4D4" stroke="#B2B2B2" stroke-width="2"/>
+                </g>
+                <defs>
+                    <filter id="filter0_d_9397_2662" x="0" y="0" width="60" height="60" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                        <feOffset dy="2"/>
+                        <feGaussianBlur stdDeviation="2"/>
+                        <feComposite in2="hardAlpha" operator="out"/>
+                        <feColorMatrix type="matrix" values="0 0 0 0 0.913725 0 0 0 0 0.917647 0 0 0 0 0.921569 0 0 0 1 0"/>
+                        <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9397_2662"/>
+                        <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9397_2662" result="shape"/>
+                    </filter>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- Maps -->
+        <div class="stack-icon-container" style="left: 500px; top: 50px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60" fill="none">
+                <g filter="url(#filter0_d_9397_2653)">
+                    <rect x="5" y="3" width="50" height="50" rx="15" fill="#F6F6F6" stroke="white" stroke-width="2"/>
+                    <path d="M28.2451 18.5039C28.9324 18.0709 29.7736 17.9062 30.5908 18.0518C31.4049 18.1968 32.1183 18.6356 32.5898 19.2627C32.6051 19.2866 32.6281 19.323 32.6592 19.373C32.7213 19.473 32.8095 19.6174 32.9209 19.7998C33.1433 20.164 33.4543 20.6754 33.8242 21.2871C34.5641 22.5105 35.5391 24.1297 36.5186 25.7568C38.4451 28.9575 40.3973 32.2062 40.584 32.5107V32.5117C40.7888 32.852 40.9208 33.226 40.9736 33.6113C41.0265 33.9966 40.9997 34.3884 40.8945 34.7646C40.7893 35.1409 40.6072 35.4963 40.3564 35.8096C40.1056 36.123 39.7902 36.3883 39.4277 36.5889C39.0653 36.7894 38.6636 36.9208 38.2451 36.9736C37.8264 37.0264 37.4003 36.9992 36.9932 36.8945C36.5862 36.7899 36.2064 36.6103 35.876 36.3672C35.5457 36.1241 35.2712 35.8227 35.0664 35.4824C31.0965 28.8867 29.1361 25.6495 28.1748 24.0625H28.2324L27.2734 22.5312C26.8595 21.8703 26.7304 21.0876 26.9072 20.3438C27.0845 19.5987 27.559 18.9363 28.2451 18.5039ZM20.9453 31.2285C21.5968 30.9696 22.3215 30.9231 23.0049 31.0986C23.6881 31.2741 24.2845 31.6589 24.7051 32.1846C25.0725 32.6438 25.2886 33.1893 25.3369 33.7539L25.3477 33.9971C25.3474 34.4503 25.2384 34.8994 25.0273 35.3096C24.8161 35.7198 24.5068 36.0816 24.1211 36.3652C23.7352 36.649 23.2839 36.8463 22.8008 36.9385C22.3175 37.0306 21.8182 37.0147 21.3428 36.8926C20.8673 36.7704 20.4302 36.5459 20.0654 36.2393C19.7009 35.9328 19.4186 35.5525 19.2363 35.1309C19.0542 34.7095 18.9762 34.2558 19.0068 33.8037C19.0376 33.3513 19.1761 32.9089 19.415 32.5117C19.7583 31.9411 20.2941 31.4873 20.9453 31.2285ZM24.584 23.9297C24.6607 24.0725 24.7442 24.2237 24.8359 24.3848C25.45 25.4625 26.4939 27.1287 28.2305 29.999L27.5938 31.0576C27.5178 30.9271 27.4387 30.7979 27.3525 30.6729C26.817 29.8953 26.1022 29.2517 25.2686 28.79C24.4352 28.3286 23.5038 28.0603 22.5479 28.0049C22.4112 27.997 22.2742 27.9943 22.1377 27.9951L24.584 23.9297ZM26.5254 22.0674C26.5495 22.0698 26.57 22.0726 26.5859 22.0752C26.5679 22.0723 26.5474 22.0697 26.5254 22.0674Z" fill="#E1E1E1" stroke="#C1C1C1" stroke-width="2"/>
+                </g>
+                <defs>
+                    <filter id="filter0_d_9397_2653" x="0" y="0" width="60" height="60" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                        <feOffset dy="2"/>
+                        <feGaussianBlur stdDeviation="2"/>
+                        <feComposite in2="hardAlpha" operator="out"/>
+                        <feColorMatrix type="matrix" values="0 0 0 0 0.913725 0 0 0 0 0.917647 0 0 0 0 0.921569 0 0 0 1 0"/>
+                        <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9397_2653"/>
+                        <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9397_2653" result="shape"/>
+                    </filter>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- Wave icon -->
+        <div class="stack-icon-container" style="left: 600px; top: 110px;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 60 60" fill="none">
+                <g filter="url(#filter0_d_9397_2650)">
+                    <rect x="-1" y="1" width="50" height="50" rx="15" transform="matrix(-1 0 0 1 54 2)" fill="#F6F6F6" stroke="white" stroke-width="2"/>
+                    <path d="M43.0869 23.126L42.9961 24.209L42.8916 25.4648V25.4658C42.7102 27.6432 42.1032 29.4907 40.8984 31.1445C39.7061 32.7811 37.9762 34.1628 35.6582 35.4961C34.4199 36.2084 33.1489 37.0514 32.8145 37.3496C32.1103 37.9775 31.6032 38.9761 31.4756 40.1211L31.3652 41.1104L31.2666 42H24.377L24.4492 40.9326L24.54 39.5918C24.669 37.6817 25.3707 35.6529 26.4531 34.0449C27.6548 32.2597 29.2649 31.0265 32.5342 29.1836C33.3405 28.7292 34.2753 28.0953 34.5977 27.8076L34.7246 27.6875C35.3502 27.0608 35.8415 26.0439 35.9619 25.001L36.0762 24.0107L36.1787 23.126H43.0869ZM36.623 14L36.5508 15.0674L36.46 16.4082C36.331 18.3183 35.6293 20.3471 34.5469 21.9551C33.3452 23.7403 31.7351 24.9735 28.4658 26.8164C27.7604 27.214 26.9567 27.749 26.5508 28.0693L26.4023 28.1924C25.7172 28.8037 25.1665 29.8867 25.0381 30.999L24.9238 31.9893L24.8213 32.874H17.9131L18.0039 31.791L18.1084 30.5352V30.5342C18.2898 28.3568 18.8968 26.5093 20.1016 24.8555C21.2939 23.2189 23.0238 21.8372 25.3418 20.5039C26.5801 19.7916 27.8511 18.9486 28.1855 18.6504C28.8897 18.0225 29.3968 17.0239 29.5244 15.8789L29.6348 14.8896L29.7334 14H36.623Z" fill="#D4D4D4" stroke="#B2B2B2" stroke-width="2"/>
+                </g>
+                <defs>
+                    <filter id="filter0_d_9397_2650" x="0" y="0" width="60" height="60" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                        <feOffset dy="2"/>
+                        <feGaussianBlur stdDeviation="2"/>
+                        <feComposite in2="hardAlpha" operator="out"/>
+                        <feColorMatrix type="matrix" values="0 0 0 0 0.913725 0 0 0 0 0.917647 0 0 0 0 0.921569 0 0 0 1 0"/>
+                        <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_9397_2650"/>
+                        <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_9397_2650" result="shape"/>
+                    </filter>
+                </defs>
+            </svg>
+        </div>
+    </div>
+
+    <!-- Hover Cards -->
+    <div class="hero-card card-l1 hover-group" data-group="l1">
+        <div class="card-icon">
+            <svg width="64" height="66" viewBox="0 0 64 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="32" r="32" fill="#0898D7"/>
+                <g filter="url(#filter0_d_9320_2505)">
+                    <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+                </g>
+                <path d="M48.6055 35.0322L40.0137 38.9365L35.6855 48.3135L29 29L48.6055 35.0322ZM36.083 40.292L37.5225 37.1738L37.7568 36.668L40.1641 35.5732L33.7686 33.6055L36.083 40.292Z" fill="#616876"/>
+                <path d="M32 16C32.2603 16 32.5191 16.0063 32.7764 16.0186C32.9964 15.9853 33.2223 15.9997 33.4365 16.0645C41.6 16.7909 48 23.6476 48 32C48 32.0714 47.998 32.1427 47.9971 32.2139L44.9795 31.2852C44.8974 29.7736 44.558 28.3309 44.0029 27H40.3213C40.5829 27.9633 40.7807 28.9743 40.8936 30.0283L37.7158 29.0508C37.5811 28.3426 37.4055 27.6578 37.1934 27H31.0508L24.8457 25.0908L26.6084 30.1846C26.539 30.7755 26.5 31.381 26.5 32C26.5 34.047 26.8531 35.8797 27.4014 37.5H29.1416L30.1797 40.5H28.7373C29.6123 42.0657 30.6179 43.3369 31.501 44.3193L32.7686 47.9805C32.5139 47.9925 32.2577 48 32 48C31.8606 48 31.7216 47.9977 31.583 47.9941C31.4858 47.9997 31.3885 47.9967 31.292 47.9834C22.784 47.6129 16 40.5993 16 32C16 23.4033 22.7798 16.39 31.2842 16.0156C31.3864 16.0009 31.4899 15.9975 31.5928 16.0039C31.7281 16.0005 31.8639 16 32 16ZM22.168 40.5C23.607 42.1631 25.4586 43.459 27.5664 44.2236C26.7994 43.164 26.0305 41.9231 25.3721 40.5H22.168ZM19.9971 27C19.3551 28.5393 19 30.2281 19 32C19 33.966 19.4375 35.8295 20.2188 37.5H24.2578C23.7891 35.8464 23.5 34.0127 23.5 32C23.5 30.2227 23.7578 28.5497 24.1787 27H19.9971ZM27.6748 19.7373C25.3145 20.5698 23.2692 22.0663 21.7568 24H25.2451C25.9607 22.3761 26.8212 20.9445 27.6748 19.7373ZM32.1367 19.001C31.0819 20.1227 29.7014 21.8359 28.5713 24H35.9287C34.7996 21.8379 33.4197 20.1267 32.3652 19.0049C32.2892 19.0028 32.213 19.0018 32.1367 19.001ZM37.0078 20C37.8005 21.1506 38.5904 22.4922 39.2549 24H42.2432C40.8785 22.2552 39.0805 20.866 37.0078 20Z" fill="#616876"/>
+            </svg>
+        </div>
+        <h3 class="card-title">Website</h3>
+        <p class="card-text">Custom-built, mobile-first websites built for modern search, including Google, AI platforms, and Maps. Designed around customer intent, local visibility, and the actions that turn visitors into leads.</p>
+    </div>
+
+    <div class="hero-card card-l3 hover-group" data-group="l3">
+        <div class="card-icon">
+            <svg width="64" height="66" viewBox="0 0 64 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="32" r="32" fill="#0897D6"/>
+                <g filter="url(#filter0_d_9320_2533)">
+                    <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+                </g>
+                <path d="M42.5 18C45.5376 18 48 20.4624 48 23.5V34.5C48 35.3284 47.3284 36 46.5 36C45.6716 36 45 35.3284 45 34.5V27.5H19V40C19 41.3807 20.1193 42.5 21.5 42.5H31.5C32.3284 42.5 33 43.1716 33 44C33 44.8284 32.3284 45.5 31.5 45.5H21.5C18.4624 45.5 16 43.0376 16 40V23.5C16 20.4624 18.4624 18 21.5 18H42.5ZM21.5 21C20.1193 21 19 22.1193 19 23.5V24.5H45V23.5C45 22.1193 43.8807 21 42.5 21H21.5Z" fill="#616876"/>
+                <path d="M31.628 30.0035L31.7764 30.0162L35.0342 30.3776L35.5567 30.4361L45.4288 40.3082C47.1191 41.9986 47.1191 44.739 45.4288 46.4293C43.7384 48.1197 40.998 48.1197 39.3077 46.4293L29.4356 36.5572L29.377 36.0348L29.0157 32.777C28.8443 31.2344 30.1015 29.9229 31.628 30.0035ZM32.3008 35.1803L41.4288 44.3082C41.9476 44.827 42.7889 44.827 43.3077 44.3082C43.8265 43.7894 43.8265 42.9481 43.3077 42.4293L34.1797 33.3014L32.0655 33.066L32.3008 35.1803Z" fill="#616876"/>
+            </svg>
+        </div>
+        <h3 class="card-title">Content</h3>
+        <p class="card-text">Content written for SEO, AIO, local search, and Maps visibility, while still speaking clearly to the customer. Built to match search intent, improve rankings, support AI understanding, and move visitors toward conversion.</p>
+    </div>
+
+    <div class="hero-card card-l2 hover-group" data-group="l2">
+        <div class="card-icon">
+            <svg width="64" height="66" viewBox="0 0 64 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="32" r="32" fill="#0897D6"/>
+                <g filter="url(#filter0_d_9320_2547)">
+                    <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+                </g>
+                <path d="M45.5605 44.4395C46.1463 45.0252 46.1463 45.9748 45.5605 46.5605C44.9748 47.1463 44.0252 47.1463 43.4395 46.5605L37.4395 40.5605L39.5605 38.4395L45.5605 44.4395Z" fill="#616876"/>
+                <path d="M44.9995 20C46.6564 20 47.9995 21.3431 47.9995 23V28.5C47.9995 30.1569 46.6564 31.5 44.9995 31.5C43.7667 31.4999 42.7088 30.7556 42.2476 29.6924L39.0522 32.6895C38.2914 33.4027 37.2146 33.6683 36.2104 33.3945L32.4927 32.3799L29.23 36.0068V36.0078C28.1215 37.239 26.2239 37.3384 24.9927 36.2305C23.7612 35.1219 23.6618 33.2235 24.77 31.9922L29.27 26.9922C30.0285 26.1499 31.1965 25.8079 32.2886 26.1055L36.1694 27.1631L37.9048 25.5371C37.0618 25.006 36.4995 24.0699 36.4995 23C36.4995 21.3433 37.8428 20.0002 39.4995 20H44.9995Z" fill="#616876" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M31 18C33.0963 18 35.0766 18.4966 36.8301 19.3779C36.0046 19.9874 35.3941 20.8719 35.1357 21.8965C33.8749 21.3228 32.4755 21 31 21C25.4772 21 21 25.4772 21 31C21 36.5228 25.4772 41 31 41C35.7903 41 39.7907 37.6311 40.7686 33.1338L42.0703 31.9141C42.5822 32.3537 43.1942 32.6795 43.8672 32.8545C42.9671 39.1557 37.55 44 31 44C23.8203 44 18 38.1797 18 31C18 23.8203 23.8203 18 31 18Z" fill="#616876"/>
+            </svg>
+        </div>
+        <h3 class="card-title">AI &amp; Search</h3>
+        <p class="card-text">Search structure, metadata, internal linking, structured data, and AI-ready formatting built into the foundation, so your pages can be understood by Google, local search systems, and AI platforms.</p>
+    </div>
+
+    <div class="hero-card card-r1 hover-group" data-group="r1">
+        <div class="card-icon">
+            <svg width="64" height="66" viewBox="0 0 64 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="32" r="32" fill="#B3D4A0"/>
+                <g filter="url(#filter0_d_9320_2527)">
+                    <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+                </g>
+                <g transform="translate(16, 19.5)">
+                    <path d="M11.3711 12.0127C11.9165 11.3893 12.8638 11.3258 13.4873 11.8711C14.1107 12.4165 14.1742 13.3638 13.6289 13.9873L11.0518 16.9307L13.5605 19.4395C14.1463 20.0252 14.1463 20.9748 13.5605 21.5605C12.9748 22.1463 12.0252 22.1463 11.4395 21.5605L6.94727 17.0684L11.3711 12.0127Z" fill="#6A7661"/>
+                    <path d="M18.9395 11.9395C19.5252 11.3537 20.4748 11.3537 21.0605 11.9395L25.5527 16.4316L21.1289 21.4873C20.5835 22.1107 19.6362 22.1742 19.0127 21.6289C18.3893 21.0834 18.3258 20.1361 18.8711 19.5127L21.4482 16.5693L18.9395 14.0605C18.3537 13.4748 18.3537 12.5252 18.9395 11.9395Z" fill="#6A7661"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M28 0C30.2091 0 32 1.79086 32 4V23C32 25.2091 30.2091 27 28 27H4C1.85996 27 0.112115 25.3194 0.00488281 23.2061L0 23V4C0 1.79086 1.79086 0 4 0H28ZM3 23C3 23.5523 3.44772 24 4 24H28C28.5523 24 29 23.5523 29 23V8.5H3V23ZM4 3C3.44771 3 3 3.44772 3 4V5.5H29V4C29 3.44772 28.5523 3 28 3H4Z" fill="#6A7661"/>
+                </g>
+            </svg>
+        </div>
+        <h3 class="card-title">Maintenance</h3>
+        <p class="card-text">Secure hosting, platform updates, performance tuning, monitoring, and technical management handled every month with nothing required from your team.</p>
+    </div>
+
+    <div class="hero-card card-r2 hover-group" data-group="r2">
+        <div class="card-icon">
+            <svg width="64" height="66" viewBox="0 0 64 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="32" r="32" fill="#B3D4A0"/>
+                <g filter="url(#filter0_d_9320_2511)">
+                    <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+                </g>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M42 19C44.2091 19 46 20.7909 46 23V43C46 45.14 44.3194 46.8879 42.2061 46.9951L42 47L21.7939 46.9951C19.7488 46.8913 18.1087 45.2512 18.0049 43.2061L18 34.7256L18.9561 36.04C19.507 36.7975 20.2179 37.345 21 37.6846V40.1719L23.0742 38.0967C24.572 38.0749 26.0618 37.3913 27.0439 36.041L32.0176 29.2021C32.0553 29.1503 32.0903 29.0965 32.127 29.0439L39.1719 22H33.9463C33.8441 20.9532 33.5931 19.9464 33.2178 19H42ZM22.8281 44H28.6719L34.9219 37.75L32 34.8281L22.8281 44ZM34.3281 44H41.1719L37.75 40.5781L34.3281 44ZM34.8281 32L43 40.1719V23.8281L34.8281 32Z" fill="#6A7661"/>
+                <path d="M23 21C24.1046 21 25 21.8954 25 23C25 24.1046 24.1046 25 23 25C21.8954 25 21 24.1046 21 23C21 21.8954 21.8954 21 23 21Z" fill="#6A7661"/>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M23 15C27.4181 15.0001 30.9999 18.6619 31 23.0801L30.9941 23.3721C30.9366 24.8289 30.4493 26.257 29.5908 27.4375L24.6172 34.2764L24.54 34.376C23.7437 35.3409 22.2564 35.3408 21.46 34.376L21.3828 34.2764L16.4092 27.4375C15.4934 26.1783 15 24.6371 15 23.0801C15.0001 18.6619 18.5818 15 23 15ZM23 18C20.2774 18 18.0001 20.2797 18 23.0801C18 24.0131 18.2981 24.9345 18.835 25.6729L23 31.3994L27.165 25.6729C27.7019 24.9345 28 24.0131 28 23.0801C27.9999 20.2797 25.7226 18.0001 23 18Z" fill="#6A7661"/>
+            </svg>
+        </div>
+        <h3 class="card-title">Maps</h3>
+        <p class="card-text">Google Business Profile and Maps optimization focused on improving local visibility in the Google 3-Pack, with support for Apple Maps and Bing Places.</p>
+    </div>
+
+    <div class="hero-card card-r3 hover-group" data-group="r3">
+        <div class="card-icon">
+            <svg width="64" height="66" viewBox="0 0 64 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="32" r="32" fill="#B3D4A0"/>
+                <g filter="url(#filter1_d_9320_2515)">
+                    <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+                </g>
+                <path fill-rule="evenodd" clip-rule="evenodd" d="M41.5 16C42.3284 16 43 16.6716 43 17.5V19L43.2568 19.0068C45.8989 19.1405 48 21.3247 48 24V43C48 45.7614 45.7614 48 43 48H21C18.3247 48 16.1405 45.8989 16.0068 43.2568L16 43V24C16 21.3247 18.1011 19.1405 20.7432 19.0068L21 19V17.5C21 16.6716 21.6716 16 22.5 16C23.3284 16 24 16.6716 24 17.5V19H31V17.5C31 16.6716 31.6716 16 32.5 16C33.3284 16 34 16.6716 34 17.5V19H40V17.5C40 16.6716 40.6716 16 41.5 16ZM19 43C19 44.1046 19.8954 45 21 45H43C44.1046 45 45 44.1046 45 43V29.5H19V43ZM24 22.5C24 23.3284 23.3284 24 22.5 24C21.6716 24 21 23.3284 21 22.5V22C19.8954 22 19 22.8954 19 24V26.5H45V24C45 22.8954 44.1046 22 43 22V22.5C43 23.3284 42.3284 24 41.5 24C40.6716 24 40 23.3284 40 22.5V22H34V22.5C34 23.3284 33.3284 24 32.5 24C31.6716 24 31 23.3284 31 22.5V22H24V22.5Z" fill="#6A7661"/>
+                <path d="M32.5002 32C33.3284 32.0002 34.0002 32.6717 34.0002 33.5V41.5C34.0002 42.3283 33.3284 42.9998 32.5002 43C31.6717 43 31.0002 42.3284 31.0002 41.5V36.2764L30.3478 37.0742C30.1273 37.3436 29.7975 37.5 29.4494 37.5C28.4702 37.4998 27.9308 36.3615 28.551 35.6035L31.1515 32.4258C31.372 32.1563 31.7018 32 32.05 32C32.2013 32 32.3486 32 32.5002 32Z" fill="#6A7661"/>
+            </svg>
+        </div>
+        <h3 class="card-title">Site Optimization</h3>
+        <p class="card-text">Each month, we improve one priority page, section, or site area. This can include content updates, SEO improvements, AI structure tuning, menu and footer refinements, homepage adjustments, UX improvements, conversion updates, and focused design tweaks.</p>
+    </div>
+
+    <div class="hero-card card-r4 hover-group" data-group="r4">
+        <div class="card-icon">
+            <svg width="64" height="66" viewBox="0 0 64 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="32" cy="32" r="32" fill="#B3D4A0"/>
+                <g filter="url(#filter0_d_r4_card)">
+                    <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+                </g>
+                <g transform="translate(17.5, 16)">
+                    <path d="M28.6398 16.2762L12.9987 0.366334C12.5188 -0.121851 11.7407 -0.121851 11.2609 0.366334C10.781 0.854519 10.7809 1.64595 11.2609 2.13408L12.3889 3.28151L6.71001 15.6019L1.07806 21.3306C-0.359355 22.7927 -0.359355 25.1718 1.07806 26.6339L2.816 28.4017C4.2568 29.8673 6.58891 29.8673 8.0297 28.4017L9.46958 26.9371L13.3358 30.8698C14.0355 31.5988 14.9718 32 15.9737 32C18.0065 32 19.6603 30.3178 19.6603 28.25C19.6603 27.231 19.2658 26.2785 18.5491 25.5668L15.0522 22.0098L25.7739 16.8964L26.902 18.0439C27.3819 18.5321 28.16 18.5321 28.6398 18.0439C29.1197 17.5558 29.1197 16.7643 28.6398 16.2762ZM6.29176 26.634C5.81152 27.1225 5.03419 27.1225 4.55388 26.634L2.81594 24.8662C2.3368 24.3788 2.3368 23.5858 2.81594 23.0984L7.73121 18.0987L11.207 21.6342L6.29176 26.634ZM16.8296 27.3533C17.0701 27.5908 17.2025 27.9093 17.2025 28.2501C17.2025 28.9394 16.6512 29.5001 15.9736 29.5001C15.6385 29.5001 15.3254 29.3655 15.0919 29.1209C15.0877 29.1165 11.2073 25.1694 11.2073 25.1694L12.9448 23.402C12.9448 23.402 16.8253 27.349 16.8296 27.3533ZM13.2041 20.1301L9.20992 16.0673L14.2369 5.16131L23.9258 15.0166L13.2041 20.1301Z" fill="#6A7661"/>
+                    <path d="M24.1742 8.11154C24.4819 8.7268 25.2218 8.97186 25.8267 8.65886L28.3281 7.36442C28.933 7.05135 29.1739 6.29879 28.8661 5.68347C28.5584 5.06816 27.8186 4.82316 27.2136 5.13616L24.7122 6.4306C24.1073 6.74367 23.8664 7.49623 24.1742 8.11154Z" fill="#6A7661"/>
+                    <path d="M21.0257 4.90885C21.6306 5.22185 22.3704 4.97678 22.6782 4.36147L23.9507 1.81702C24.2585 1.20171 24.0175 0.449143 23.4126 0.136142C22.8077 -0.176859 22.0679 0.0681422 21.7601 0.683519L20.4876 3.22796C20.1798 3.84328 20.4208 4.59584 21.0257 4.90885Z" fill="#6A7661"/>
+                </g>
+                <defs>
+                    <filter id="filter0_d_r4_card" x="2" y="6" width="60" height="60" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                        <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                        <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                        <feOffset dy="4"/>
+                        <feGaussianBlur stdDeviation="2"/>
+                        <feComposite in2="hardAlpha" operator="out"/>
+                        <feColorMatrix type="matrix" values="0 0 0 0 0.290196 0 0 0 0 0.52549 0 0 0 0 0.156863 0 0 0 0.61 0"/>
+                        <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_r4_card"/>
+                        <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_r4_card" result="shape"/>
+                    </filter>
+                </defs>
+            </svg>
+        </div>
+        <h3 class="card-title">Marketing</h3>
+        <p class="card-text">Paid ads, social, email, and campaign strategy connected directly to your website, so every marketing channel supports focused pages built to attract better traffic and convert more leads.</p>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         MOBILE HERO  (hidden on desktop via CSS)
+         ═══════════════════════════════════════════ -->
+    <div class="mob-hero">
+        <div class="mob-dotbg"></div>
+        <div id="mob-backdrop" class="mob-backdrop"></div>
+        <style>@keyframes mob-flow{to{stroke-dashoffset:-130}}</style>
+
+        <div class="mob-inner">
+
+            <!-- Title -->
+            <h1 class="mob-h1">Website &amp; Marketing<br>Built as <span class="accent">One System</span></h1>
+            <p class="mob-desc">Your website and marketing aren't separate, they are the same thing. Maps, Ads, AI, and SEO all depend on how the site is built</p>
+
+            <div class="mob-mindmap">
+
+                <!-- ── Top nodes: Initial Build inputs ── -->
+                <div class="mob-nodes-row mob-nodes-top">
+                    <!-- Website -->
+                    <div class="mob-node" id="mn-l1">
+                        <div class="mob-node-icon">
+                            <svg viewBox="0 0 64 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="32" cy="32" r="32" fill="#0898D7"/>
+                                <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+                                <path d="M48.6055 35.0322L40.0137 38.9365L35.6855 48.3135L29 29L48.6055 35.0322ZM36.083 40.292L37.5225 37.1738L37.7568 36.668L40.1641 35.5732L33.7686 33.6055L36.083 40.292Z" fill="#616876"/>
+                                <path d="M32 16C41.6 16.78 48 23.65 48 32C48 32.07 47.998 32.14 47.997 32.21L44.98 31.29C44.9 29.77 44.56 28.33 44.003 27H40.32C40.58 27.96 40.78 28.97 40.89 30.03L37.72 29.05C37.58 28.34 37.41 27.66 37.19 27H31.05L24.85 25.09L26.61 30.18C26.54 30.78 26.5 31.38 26.5 32C26.5 34.05 26.85 35.88 27.4 37.5H29.14L30.18 40.5H28.74C29.61 42.07 30.62 43.34 31.5 44.32L32.77 47.98C32.51 47.99 32.26 48 32 48C22.78 47.61 16 40.6 16 32C16 23.4 22.78 16.39 31.28 16.02C31.73 16 32 16 32 16ZM22.17 40.5C23.61 42.16 25.46 43.46 27.57 44.22C26.8 43.16 26.03 41.92 25.37 40.5H22.17ZM20 27C19.36 28.54 19 30.23 19 32C19 33.97 19.44 35.83 20.22 37.5H24.26C23.79 35.85 23.5 34.01 23.5 32C23.5 30.22 23.76 28.55 24.18 27H20ZM27.67 19.74C25.31 20.57 23.27 22.07 21.76 24H25.25C25.96 22.38 26.82 20.94 27.67 19.74ZM32.14 19C31.08 20.12 29.7 21.84 28.57 24H35.93C34.8 21.84 33.42 20.13 32.37 19.01C32.29 19 32.21 19 32.14 19ZM37.01 20C37.8 21.15 38.59 22.49 39.25 24H42.24C40.88 22.26 39.08 20.87 37.01 20Z" fill="#616876"/>
+                            </svg>
+                        </div>
+                        <span class="mob-node-label">Website</span>
+                    </div>
+                    <!-- Content -->
+                    <div class="mob-node" id="mn-l3">
+                        <div class="mob-node-icon">
+                            <svg viewBox="0 0 64 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="32" cy="32" r="32" fill="#0897D6"/>
+                                <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+                                <path d="M42.5 18C45.54 18 48 20.46 48 23.5V34.5C48 35.33 47.33 36 46.5 36C45.67 36 45 35.33 45 34.5V27.5H19V40C19 41.38 20.12 42.5 21.5 42.5H31.5C32.33 42.5 33 43.17 33 44C33 44.83 32.33 45.5 31.5 45.5H21.5C18.46 45.5 16 43.04 16 40V23.5C16 20.46 18.46 18 21.5 18H42.5ZM21.5 21C20.12 21 19 22.12 19 23.5V24.5H45V23.5C45 22.12 43.88 21 42.5 21H21.5Z" fill="#616876"/>
+                                <path d="M31.63 30L31.78 30.02L35.03 30.38L35.56 30.44L45.43 40.31C47.12 42 47.12 44.74 45.43 46.43C43.74 48.12 41 48.12 39.31 46.43L29.44 36.56L29.38 36.03L29.02 32.78C28.84 31.23 30.1 29.92 31.63 30ZM32.3 35.18L41.43 44.31C41.95 44.83 42.79 44.83 43.31 44.31C43.83 43.79 43.83 42.95 43.31 42.43L34.18 33.3L32.07 33.07L32.3 35.18Z" fill="#616876"/>
+                            </svg>
+                        </div>
+                        <span class="mob-node-label">Content</span>
+                    </div>
+                    <!-- AI & Search -->
+                    <div class="mob-node" id="mn-l2">
+                        <div class="mob-node-icon">
+                            <svg viewBox="0 0 64 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="32" cy="32" r="32" fill="#0897D6"/>
+                                <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+                                <path d="M45.56 44.44C46.15 45.03 46.15 45.97 45.56 46.56C44.97 47.15 44.03 47.15 43.44 46.56L37.44 40.56L39.56 38.44L45.56 44.44Z" fill="#616876"/>
+                                <path d="M45 20C46.66 20 48 21.34 48 23V28.5C48 30.16 46.66 31.5 45 31.5C43.77 31.5 42.71 30.76 42.25 29.69L39.05 32.69C38.29 33.4 37.21 33.67 36.21 33.39L32.49 32.38L29.23 36.01C28.12 37.24 26.22 37.34 24.99 36.23C23.76 35.12 23.66 33.22 24.77 31.99L29.27 26.99C30.03 26.15 31.2 25.81 32.29 26.11L36.17 27.16L37.9 25.54C37.06 25.01 36.5 24.07 36.5 23C36.5 21.34 37.84 20 39.5 20H45Z" fill="#616876" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M31 18C33.1 18 35.08 18.5 36.83 19.38C36 19.99 35.39 20.87 35.14 21.9C33.87 21.32 32.48 21 31 21C25.48 21 21 25.48 21 31C21 36.52 25.48 41 31 41C35.79 41 39.79 37.63 40.77 33.13L42.07 31.91C42.58 32.35 43.19 32.68 43.87 32.85C42.97 39.16 37.55 44 31 44C23.82 44 18 38.18 18 31C18 23.82 23.82 18 31 18Z" fill="#616876"/>
+                            </svg>
+                        </div>
+                        <span class="mob-node-label">AI &amp; Search</span>
+                    </div>
+                </div>
+
+                <!-- ── Fan-in connector: 3 nodes → Initial Build pill ── -->
+                <svg class="mob-connector" viewBox="0 0 343 110" fill="none">
+                    <defs>
+                        <linearGradient id="mg-in" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#2F6FBF" stop-opacity="0.25"/>
+                            <stop offset="100%" stop-color="#2F6FBF" stop-opacity="0.9"/>
+                        </linearGradient>
+                    </defs>
+                    <!-- Left: x=57 → cx=171.5 -->
+                    <path d="M 57 6 C 57 60.5, 171.5 49.5, 171.5 104" stroke="#2F6FBF" stroke-opacity="0.15" stroke-width="6" fill="none" stroke-linecap="round"/>
+                    <path d="M 57 6 C 57 60.5, 171.5 49.5, 171.5 104" stroke="url(#mg-in)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+                    <path d="M 57 6 C 57 60.5, 171.5 49.5, 171.5 104" stroke="#2F6FBF" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-dasharray="3 10" style="animation:mob-flow 2.8s linear infinite; animation-delay:0s"/>
+                    <!-- Center: x=171.5 straight -->
+                    <path d="M 171.5 6 C 171.5 60.5, 171.5 49.5, 171.5 104" stroke="#2F6FBF" stroke-opacity="0.15" stroke-width="6" fill="none" stroke-linecap="round"/>
+                    <path d="M 171.5 6 C 171.5 60.5, 171.5 49.5, 171.5 104" stroke="url(#mg-in)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+                    <path d="M 171.5 6 C 171.5 60.5, 171.5 49.5, 171.5 104" stroke="#2F6FBF" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-dasharray="3 10" style="animation:mob-flow 2.8s linear infinite; animation-delay:0.22s"/>
+                    <!-- Right: x=286 → cx=171.5 -->
+                    <path d="M 286 6 C 286 60.5, 171.5 49.5, 171.5 104" stroke="#2F6FBF" stroke-opacity="0.15" stroke-width="6" fill="none" stroke-linecap="round"/>
+                    <path d="M 286 6 C 286 60.5, 171.5 49.5, 171.5 104" stroke="url(#mg-in)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+                    <path d="M 286 6 C 286 60.5, 171.5 49.5, 171.5 104" stroke="#2F6FBF" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-dasharray="3 10" style="animation:mob-flow 2.8s linear infinite; animation-delay:0.44s"/>
+                    <!-- Travelling dots -->
+                    <circle r="2.2" fill="#2F6FBF"><animateMotion dur="2.8s" repeatCount="indefinite" begin="0s" path="M 57 6 C 57 60.5, 171.5 49.5, 171.5 104"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.85;1" dur="2.8s" repeatCount="indefinite" begin="0s"/></circle>
+                    <circle r="2.2" fill="#2F6FBF"><animateMotion dur="2.8s" repeatCount="indefinite" begin="0.35s" path="M 171.5 6 L 171.5 104"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.85;1" dur="2.8s" repeatCount="indefinite" begin="0.35s"/></circle>
+                    <circle r="2.2" fill="#2F6FBF"><animateMotion dur="2.8s" repeatCount="indefinite" begin="0.7s" path="M 286 6 C 286 60.5, 171.5 49.5, 171.5 104"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.85;1" dur="2.8s" repeatCount="indefinite" begin="0.7s"/></circle>
+                </svg>
+
+                <!-- Initial Build pill -->
+                <div class="mob-pill mob-pill-navy">Initial Build</div>
+
+                <!-- Hub -->
+                <div class="mob-hub">
+                    <svg width="104" height="104" viewBox="0 0 220 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <g filter="url(#mhub-filter0)">
+                            <circle cx="109.754" cy="109.754" r="109.754" transform="rotate(180 109.754 109.754)" fill="white" fill-opacity="0.01"/>
+                        </g>
+                        <g clip-path="url(#mhub-circle-clip)">
+                            <path d="M 109.754 0.5 A 109.254 109.254 0 0 0 109.754 219.008 Z" fill="url(#mhub-paint-blue)"/>
+                            <path d="M 109.754 0.5 A 109.254 109.254 0 0 1 109.754 219.008 Z" fill="url(#mhub-paint0)"/>
+                        </g>
+                        <circle cx="109.754" cy="109.754" r="109.254" transform="rotate(180 109.754 109.754)" stroke="#E9EEF4"/>
+                        <ellipse cx="109.758" cy="109.063" rx="76.5" ry="76" fill="white" fill-opacity="0.2"/>
+                        <path d="M109.758 33.5632C151.735 33.5632 185.758 67.3688 185.758 109.063C185.758 150.758 151.735 184.563 109.758 184.563C67.7816 184.563 33.7583 150.758 33.7583 109.063C33.7583 67.3688 67.7816 33.5632 109.758 33.5632Z" stroke="white" stroke-opacity="0.49"/>
+                        <circle cx="110.258" cy="110.063" r="47" fill="url(#mhub-paint2)"/>
+                        <g filter="url(#mhub-filter3)">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M113.292 82.0632C113.917 82.0632 114.494 82.3021 114.933 82.7003C115.371 83.0986 115.672 83.6564 115.746 84.2937L116.137 87.7103C117.079 87.9684 118.002 88.2892 118.896 88.6711C119.793 89.0532 120.663 89.496 121.502 89.999L124.091 87.9073C124.585 87.509 125.185 87.3288 125.771 87.3627C126.357 87.3967 126.932 87.644 127.376 88.0967L131.491 92.2892C131.93 92.7419 132.171 93.3271 132.206 93.9244C132.241 94.5216 132.068 95.1312 131.677 95.6342L129.565 98.351C130.015 99.1683 130.416 100.013 130.763 100.88C131.109 101.747 131.403 102.639 131.638 103.551L135.068 103.956C135.694 104.032 136.242 104.337 136.633 104.784C137.024 105.231 137.258 105.818 137.258 106.455V112.401C137.258 113.038 137.024 113.625 136.633 114.072C136.242 114.519 135.694 114.825 135.068 114.9L131.591 115.307C131.348 116.227 131.043 117.129 130.681 118.006C130.321 118.884 129.901 119.737 129.432 120.564L131.688 123.482C132.078 123.985 132.255 124.594 132.222 125.192C132.189 125.789 131.947 126.374 131.503 126.827L127.379 131.028C126.935 131.475 126.36 131.722 125.774 131.758C125.186 131.793 124.587 131.616 124.094 131.218L121.192 128.878C120.367 129.352 119.514 129.769 118.639 130.13C117.763 130.491 116.861 130.795 115.943 131.039L115.513 134.833C115.439 135.47 115.138 136.028 114.7 136.426C114.261 136.824 113.685 137.063 113.059 137.063H107.225C106.599 137.063 106.023 136.824 105.584 136.426C105.145 136.028 104.845 135.47 104.771 134.833L104.77 134.837L104.321 130.904C103.466 130.655 102.627 130.354 101.811 130.002C100.992 129.649 100.196 129.246 99.4243 128.793L96.4243 131.213C95.9306 131.611 95.3305 131.792 94.7441 131.758C94.1579 131.724 93.5831 131.476 93.1387 131.024L89.0151 126.822C88.5767 126.37 88.3351 125.784 88.3003 125.187C88.2655 124.588 88.4396 123.979 88.8306 123.476L91.2241 120.399C90.8042 119.643 90.4278 118.859 90.0962 118.058C89.7662 117.258 89.4795 116.436 89.2407 115.6L85.4482 115.152C84.8227 115.077 84.2747 114.771 83.8838 114.324C83.4929 113.877 83.2584 113.29 83.2583 112.653V106.708C83.2584 106.071 83.493 105.483 83.8838 105.037C84.2747 104.59 84.8228 104.284 85.4482 104.209L89.0444 103.791C89.2703 102.875 89.5523 101.975 89.8926 101.099C90.2314 100.223 90.6288 99.3695 91.0776 98.5435L88.8306 95.6461C88.4396 95.1431 88.2626 94.5322 88.2959 93.9348C88.3292 93.3376 88.5709 92.7524 89.0151 92.2996L93.1387 88.0982C93.5831 87.6514 94.1564 87.4041 94.7441 87.3686C95.332 87.3332 95.9306 87.5105 96.4243 87.9087L99.1108 90.0811C99.9709 89.5574 100.862 89.0963 101.781 88.701C102.701 88.3042 103.647 87.9744 104.614 87.7103L105.004 84.2937C105.078 83.6564 105.378 83.0986 105.817 82.7003C106.256 82.3021 106.832 82.0632 107.458 82.0632H113.292ZM110.258 97.341C103.631 97.341 98.2583 102.813 98.2583 109.563C98.2583 116.313 103.631 121.785 110.258 121.785C116.886 121.785 122.258 116.313 122.258 109.563C122.258 102.813 116.886 97.341 110.258 97.341Z" fill="#EAEAEA"/>
+                        </g>
+                        <defs>
+                            <filter id="mhub-filter0" x="-6.9" y="-6.89994" width="233.308" height="233.308" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                                <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                                <feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape"/>
+                                <feTurbulence type="fractalNoise" baseFrequency="0.043290041387081146 0.043290041387081146" numOctaves="3" seed="2678" result="displacementX"/>
+                                <feTurbulence type="fractalNoise" baseFrequency="0.043290041387081146 0.043290041387081146" numOctaves="3" seed="2679" result="displacementY"/>
+                                <feColorMatrix in="displacementX" type="matrix" values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="displacementXRed"/>
+                                <feColorMatrix in="displacementY" type="matrix" values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1"/>
+                                <feComposite in="displacementXRed" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
+                                <feDisplacementMap in="shape" scale="13.800000190734863" xChannelSelector="R" yChannelSelector="G" width="100%" height="100%"/>
+                                <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/>
+                                <feComponentTransfer result="sourceDisplacedAlpha"><feFuncA type="gamma" exponent="0.2"/></feComponentTransfer>
+                                <feColorMatrix in="shape" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0"/>
+                                <feComponentTransfer result="inputSourceAlpha"><feFuncA type="gamma" exponent="0.2"/></feComponentTransfer>
+                                <feComposite in="sourceDisplacedAlpha" operator="arithmetic" k1="1" k2="0" k3="0" k4="0" result="displacementAlphasMultiplied"/>
+                                <feComposite in="displacementAlphasMultiplied" operator="arithmetic" k1="0" k2="0" k3="-0.5" k4="0.5" result="centeringAdjustment"/>
+                                <feComposite in="displacementX" in2="displacementAlphasMultiplied" operator="arithmetic" k1="1" k2="0" k3="0" k4="0"/>
+                                <feComposite in="centeringAdjustment" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
+                                <feColorMatrix type="matrix" values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0 1" result="displacementXFinal"/>
+                                <feComposite in="displacementY" in2="displacementAlphasMultiplied" operator="arithmetic" k1="1" k2="0" k3="0" k4="0"/>
+                                <feComposite in="centeringAdjustment" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
+                                <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 1 0  0 0 0 0 0  0 0 0 0 1" result="displacementYFinal"/>
+                                <feComposite in="displacementXFinal" in2="displacementYFinal" operator="arithmetic" k1="0" k2="1" k3="1" k4="0"/>
+                                <feComposite in2="displacementAlphasMultiplied" operator="in" result="displacementMap"/>
+                                <feFlood flood-color="rgb(127, 127, 127)" flood-opacity="1"/>
+                                <feComposite in2="displacementAlphasMultiplied" operator="out"/>
+                                <feComposite in2="displacementMap" operator="over" result="displacementMapWithBg"/>
+                                <feDisplacementMap in="shape" scale="13.800000190734863" xChannelSelector="R" yChannelSelector="G" width="100%" height="100%" result="displacedImage"/>
+                                <feColorMatrix in="shape" type="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 127 0" result="imageOpaque"/>
+                                <feDisplacementMap in="imageOpaque" in2="displacementMapWithBg" scale="13.800000190734863" xChannelSelector="R" yChannelSelector="G" width="100%" height="100%" result="displacedImageOpaque"/>
+                                <feColorMatrix in="displacedImage" type="matrix" values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 127 0" result="displacedImageRed"/>
+                                <feColorMatrix in="shape" type="matrix" values="0 0 0 1 0  0 0 0 0 0  0 0 0 0 0  0 0 0 127 0"/>
+                                <feComposite in="displacedImageRed" operator="atop" result="transparencyRedMap"/>
+                                <feColorMatrix in="transparencyRedMap" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  1 0 0 0 0" result="transparencyAlphaMap"/>
+                                <feComposite in="displacedImageOpaque" in2="imageOpaque" operator="over"/>
+                                <feComposite in2="transparencyAlphaMap" operator="in"/>
+                            </filter>
+                            <filter id="mhub-filter3" x="79.2583" y="78.0632" width="62" height="63" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+                                <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+                                <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+                                <feOffset/>
+                                <feGaussianBlur stdDeviation="2"/>
+                                <feComposite in2="hardAlpha" operator="out"/>
+                                <feColorMatrix type="matrix" values="0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.25 0"/>
+                                <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+                                <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+                            </filter>
+                            <linearGradient id="mhub-paint0" x1="79.4885" y1="2.32814" x2="109.754" y2="219.509" gradientUnits="userSpaceOnUse">
+                                <animateTransform attributeName="gradientTransform" type="rotate" from="0 110 110" to="360 110 110" dur="10s" repeatCount="indefinite"/>
+                                <stop stop-color="#80C34A" stop-opacity="0"/>
+                                <stop offset="1" stop-color="#80C34A"/>
+                            </linearGradient>
+                            <clipPath id="mhub-circle-clip">
+                                <circle cx="109.754" cy="109.754" r="109.254"/>
+                            </clipPath>
+                            <radialGradient id="mhub-paint2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(110.258 110.063) rotate(90) scale(47)">
+                                <stop stop-color="#184B7F"/>
+                                <stop offset="1" stop-color="#0D1F40"/>
+                            </radialGradient>
+                            <linearGradient id="mhub-paint-blue" x1="109.754" y1="3.74" x2="40" y2="219.509" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#1266B5" stop-opacity="0.15"/>
+                                <stop offset="0.5" stop-color="#2563A8" stop-opacity="0.7"/>
+                                <stop offset="1" stop-color="#184B7F"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+
+                <!-- Ongoing pill -->
+                <div class="mob-pill mob-pill-green">Ongoing</div>
+
+                <!-- ── Fan-out connector: Ongoing pill → 4 output nodes ── -->
+                <svg class="mob-connector" viewBox="0 0 343 110" fill="none">
+                    <defs>
+                        <linearGradient id="mg-out" x1="0%" y1="100%" x2="0%" y2="0%">
+                            <stop offset="0%" stop-color="#5A9E2F" stop-opacity="0.25"/>
+                            <stop offset="100%" stop-color="#5A9E2F" stop-opacity="0.9"/>
+                        </linearGradient>
+                    </defs>
+                    <!-- Far left: x=43 -->
+                    <path d="M 43 104 C 43 49.5, 171.5 60.5, 171.5 6" stroke="#5A9E2F" stroke-opacity="0.15" stroke-width="6" fill="none" stroke-linecap="round"/>
+                    <path d="M 43 104 C 43 49.5, 171.5 60.5, 171.5 6" stroke="url(#mg-out)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+                    <path d="M 43 104 C 43 49.5, 171.5 60.5, 171.5 6" stroke="#5A9E2F" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-dasharray="3 10" style="animation:mob-flow 2.8s linear infinite; animation-delay:0s"/>
+                    <!-- Center-left: x=129 -->
+                    <path d="M 129 104 C 129 60.5, 171.5 60.5, 171.5 6" stroke="#5A9E2F" stroke-opacity="0.15" stroke-width="6" fill="none" stroke-linecap="round"/>
+                    <path d="M 129 104 C 129 60.5, 171.5 60.5, 171.5 6" stroke="url(#mg-out)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+                    <path d="M 129 104 C 129 60.5, 171.5 60.5, 171.5 6" stroke="#5A9E2F" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-dasharray="3 10" style="animation:mob-flow 2.8s linear infinite; animation-delay:0.18s"/>
+                    <!-- Center-right: x=214 -->
+                    <path d="M 214 104 C 214 60.5, 171.5 60.5, 171.5 6" stroke="#5A9E2F" stroke-opacity="0.15" stroke-width="6" fill="none" stroke-linecap="round"/>
+                    <path d="M 214 104 C 214 60.5, 171.5 60.5, 171.5 6" stroke="url(#mg-out)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+                    <path d="M 214 104 C 214 60.5, 171.5 60.5, 171.5 6" stroke="#5A9E2F" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-dasharray="3 10" style="animation:mob-flow 2.8s linear infinite; animation-delay:0.36s"/>
+                    <!-- Far right: x=300 -->
+                    <path d="M 300 104 C 300 49.5, 171.5 60.5, 171.5 6" stroke="#5A9E2F" stroke-opacity="0.15" stroke-width="6" fill="none" stroke-linecap="round"/>
+                    <path d="M 300 104 C 300 49.5, 171.5 60.5, 171.5 6" stroke="url(#mg-out)" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+                    <path d="M 300 104 C 300 49.5, 171.5 60.5, 171.5 6" stroke="#5A9E2F" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-dasharray="3 10" style="animation:mob-flow 2.8s linear infinite; animation-delay:0.54s"/>
+                    <!-- Travelling dots -->
+                    <circle r="2.2" fill="#5A9E2F"><animateMotion dur="2.8s" repeatCount="indefinite" begin="0s" path="M 171.5 6 C 171.5 60.5, 43 49.5, 43 104"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.85;1" dur="2.8s" repeatCount="indefinite" begin="0s"/></circle>
+                    <circle r="2.2" fill="#5A9E2F"><animateMotion dur="2.8s" repeatCount="indefinite" begin="0.35s" path="M 171.5 6 C 171.5 60.5, 129 60.5, 129 104"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.85;1" dur="2.8s" repeatCount="indefinite" begin="0.35s"/></circle>
+                    <circle r="2.2" fill="#5A9E2F"><animateMotion dur="2.8s" repeatCount="indefinite" begin="0.7s" path="M 171.5 6 C 171.5 60.5, 214 60.5, 214 104"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.85;1" dur="2.8s" repeatCount="indefinite" begin="0.7s"/></circle>
+                    <circle r="2.2" fill="#5A9E2F"><animateMotion dur="2.8s" repeatCount="indefinite" begin="1.05s" path="M 171.5 6 C 171.5 60.5, 300 49.5, 300 104"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.85;1" dur="2.8s" repeatCount="indefinite" begin="1.05s"/></circle>
+                </svg>
+
+                <!-- ── Bottom nodes: Ongoing outputs ── -->
+                <div class="mob-nodes-row mob-nodes-bottom">
+                    <!-- Maintenance -->
+                    <div class="mob-node" id="mn-r1">
+                        <div class="mob-node-icon">
+                            <svg viewBox="0 0 64 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="32" cy="32" r="32" fill="#B3D4A0"/>
+                                <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+                                <g transform="translate(16, 19.5)">
+                                    <path d="M11.37 12.01C11.92 11.39 12.86 11.33 13.49 11.87C14.11 12.42 14.17 13.36 13.63 13.99L11.05 16.93L13.56 19.44C14.15 20.03 14.15 20.97 13.56 21.56C12.97 22.15 12.03 22.15 11.44 21.56L6.95 17.07L11.37 12.01Z" fill="#6A7661"/>
+                                    <path d="M18.94 11.94C19.53 11.35 20.47 11.35 21.06 11.94L25.55 16.43L21.13 21.49C20.58 22.11 19.64 22.17 19.01 21.63C18.39 21.08 18.33 20.14 18.87 19.51L21.45 16.57L18.94 14.06C18.35 13.47 18.35 12.53 18.94 11.94Z" fill="#6A7661"/>
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M28 0C30.21 0 32 1.79 32 4V23C32 25.21 30.21 27 28 27H4C1.86 27 0.11 25.32 0 23.21L0 23V4C0 1.79 1.79 0 4 0H28ZM3 23C3 23.55 3.45 24 4 24H28C28.55 24 29 23.55 29 23V8.5H3V23ZM4 3C3.45 3 3 3.45 3 4V5.5H29V4C29 3.45 28.55 3 28 3H4Z" fill="#6A7661"/>
+                                </g>
+                            </svg>
+                        </div>
+                        <span class="mob-node-label">Maintenance</span>
+                    </div>
+                    <!-- Maps -->
+                    <div class="mob-node" id="mn-r2">
+                        <div class="mob-node-icon">
+                            <svg viewBox="0 0 64 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="32" cy="32" r="32" fill="#B3D4A0"/>
+                                <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M42 19C44.21 19 46 20.79 46 23V43C46 45.14 44.32 46.89 42.21 46.995L42 47L21.79 46.995C19.75 46.89 18.11 45.25 18 43.21L18 34.73L18.96 36.04C19.51 36.8 20.22 37.35 21 37.68V40.17L23.07 38.1C24.57 38.07 26.06 37.39 27.04 36.04L32.02 29.2C32.05 29.15 32.09 29.1 32.13 29.04L39.17 22H33.95C33.84 20.95 33.59 19.95 33.22 19H42ZM22.83 44H28.67L34.92 37.75L32 34.83L22.83 44ZM34.33 44H41.17L37.75 40.58L34.33 44ZM34.83 32L43 40.17V23.83L34.83 32Z" fill="#6A7661"/>
+                                <path d="M23 21C24.1 21 25 21.9 25 23C25 24.1 24.1 25 23 25C21.9 25 21 24.1 21 23C21 21.9 21.9 21 23 21Z" fill="#6A7661"/>
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M23 15C27.42 15 31 18.66 31 23.08L30.99 23.37C30.94 24.83 30.45 26.26 29.59 27.44L24.62 34.28L24.54 34.38C23.74 35.34 22.26 35.34 21.46 34.38L21.38 34.28L16.41 27.44C15.49 26.18 15 24.64 15 23.08C15 18.66 18.58 15 23 15ZM23 18C20.28 18 18 20.28 18 23.08C18 24.01 18.3 24.93 18.84 25.67L23 31.4L27.17 25.67C27.7 24.93 28 24.01 28 23.08C28 20.28 25.72 18 23 18Z" fill="#6A7661"/>
+                            </svg>
+                        </div>
+                        <span class="mob-node-label">Maps</span>
+                    </div>
+                    <!-- Site Optimization -->
+                    <div class="mob-node" id="mn-r3">
+                        <div class="mob-node-icon">
+                            <svg viewBox="0 0 64 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="32" cy="32" r="32" fill="#B3D4A0"/>
+                                <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M41.5 16C42.33 16 43 16.67 43 17.5V19L43.26 19.01C45.9 19.14 48 21.32 48 24V43C48 45.76 45.76 48 43 48H21C18.32 48 16.14 45.9 16.01 43.26L16 43V24C16 21.32 18.1 19.14 20.74 19.01L21 19V17.5C21 16.67 21.67 16 22.5 16C23.33 16 24 16.67 24 17.5V19H31V17.5C31 16.67 31.67 16 32.5 16C33.33 16 34 16.67 34 17.5V19H40V17.5C40 16.67 40.67 16 41.5 16ZM19 43C19 44.1 19.9 45 21 45H43C44.1 45 45 44.1 45 43V29.5H19V43ZM24 22.5C24 23.33 23.33 24 22.5 24C21.67 24 21 23.33 21 22.5V22C19.9 22 19 22.9 19 24V26.5H45V24C45 22.9 44.1 22 43 22V22.5C43 23.33 42.33 24 41.5 24C40.67 24 40 23.33 40 22.5V22H34V22.5C34 23.33 33.33 24 32.5 24C31.67 24 31 23.33 31 22.5V22H24V22.5Z" fill="#6A7661"/>
+                                <path d="M32.5 32C33.33 32 34 32.67 34 33.5V41.5C34 42.33 33.33 43 32.5 43C31.67 43 31 42.33 31 41.5V36.28L30.35 37.07C30.13 37.34 29.8 37.5 29.45 37.5C28.47 37.5 27.93 36.36 28.55 35.6L31.15 32.43C31.37 32.16 31.7 32 32.05 32C32.2 32 32.35 32 32.5 32Z" fill="#6A7661"/>
+                            </svg>
+                        </div>
+                        <span class="mob-node-label">Site Optimization</span>
+                    </div>
+                    <!-- Marketing -->
+                    <div class="mob-node" id="mn-r4">
+                        <div class="mob-node-icon">
+                            <svg viewBox="0 0 64 66" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="32" cy="32" r="32" fill="#B3D4A0"/>
+                                <circle cx="32" cy="32" r="26" fill="#FFFFFD"/>
+                                <g transform="translate(17.5, 16)">
+                                    <path d="M28.6398 16.2762L12.9987 0.366334C12.5188 -0.121851 11.7407 -0.121851 11.2609 0.366334C10.781 0.854519 10.7809 1.64595 11.2609 2.13408L12.3889 3.28151L6.71001 15.6019L1.07806 21.3306C-0.359355 22.7927 -0.359355 25.1718 1.07806 26.6339L2.816 28.4017C4.2568 29.8673 6.58891 29.8673 8.0297 28.4017L9.46958 26.9371L13.3358 30.8698C14.0355 31.5988 14.9718 32 15.9737 32C18.0065 32 19.6603 30.3178 19.6603 28.25C19.6603 27.231 19.2658 26.2785 18.5491 25.5668L15.0522 22.0098L25.7739 16.8964L26.902 18.0439C27.3819 18.5321 28.16 18.5321 28.6398 18.0439C29.1197 17.5558 29.1197 16.7643 28.6398 16.2762ZM6.29176 26.634C5.81152 27.1225 5.03419 27.1225 4.55388 26.634L2.81594 24.8662C2.3368 24.3788 2.3368 23.5858 2.81594 23.0984L7.73121 18.0987L11.207 21.6342L6.29176 26.634ZM16.8296 27.3533C17.0701 27.5908 17.2025 27.9093 17.2025 28.2501C17.2025 28.9394 16.6512 29.5001 15.9736 29.5001C15.6385 29.5001 15.3254 29.3655 15.0919 29.1209C15.0877 29.1165 11.2073 25.1694 11.2073 25.1694L12.9448 23.402C12.9448 23.402 16.8253 27.349 16.8296 27.3533ZM13.2041 20.1301L9.20992 16.0673L14.2369 5.16131L23.9258 15.0166L13.2041 20.1301Z" fill="#6A7661"/>
+                                    <path d="M24.1742 8.11154C24.4819 8.7268 25.2218 8.97186 25.8267 8.65886L28.3281 7.36442C28.933 7.05135 29.1739 6.29879 28.8661 5.68347C28.5584 5.06816 27.8186 4.82316 27.2136 5.13616L24.7122 6.4306C24.1073 6.74367 23.8664 7.49623 24.1742 8.11154Z" fill="#6A7661"/>
+                                    <path d="M21.0257 4.90885C21.6306 5.22185 22.3704 4.97678 22.6782 4.36147L23.9507 1.81702C24.2585 1.20171 24.0175 0.449143 23.4126 0.136142C22.8077 -0.176859 22.0679 0.0681422 21.7601 0.683519L20.4876 3.22796C20.1798 3.84328 20.4208 4.59584 21.0257 4.90885Z" fill="#6A7661"/>
+                                </g>
+                            </svg>
+                        </div>
+                        <span class="mob-node-label">Marketing</span>
+                    </div>
+                </div>
+
+                <!-- ── Cards (shown on tap) ── -->
+                <div class="mob-card" id="mob-card-l1">
+                    <button class="mob-card-close" aria-label="Close"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+                    <div class="mob-card-icon"><svg viewBox="0 0 64 66" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="32" fill="#0898D7"/><circle cx="32" cy="32" r="26" fill="#FFFFFD"/><path d="M48.6055 35.0322L40.0137 38.9365L35.6855 48.3135L29 29L48.6055 35.0322ZM36.083 40.292L37.5225 37.1738L37.7568 36.668L40.1641 35.5732L33.7686 33.6055L36.083 40.292Z" fill="#616876"/><path d="M32 16C41.6 16.78 48 23.65 48 32C48 32.07 47.998 32.14 47.997 32.21L44.98 31.29C44.9 29.77 44.56 28.33 44.003 27H40.32C40.58 27.96 40.78 28.97 40.89 30.03L37.72 29.05C37.58 28.34 37.41 27.66 37.19 27H31.05L24.85 25.09L26.61 30.18C26.54 30.78 26.5 31.38 26.5 32C26.5 34.05 26.85 35.88 27.4 37.5H29.14L30.18 40.5H28.74C29.61 42.07 30.62 43.34 31.5 44.32L32.77 47.98C32.51 47.99 32.26 48 32 48C22.78 47.61 16 40.6 16 32C16 23.4 22.78 16.39 31.28 16.02C31.73 16 32 16 32 16ZM22.17 40.5C23.61 42.16 25.46 43.46 27.57 44.22C26.8 43.16 26.03 41.92 25.37 40.5H22.17ZM20 27C19.36 28.54 19 30.23 19 32C19 33.97 19.44 35.83 20.22 37.5H24.26C23.79 35.85 23.5 34.01 23.5 32C23.5 30.22 23.76 28.55 24.18 27H20ZM27.67 19.74C25.31 20.57 23.27 22.07 21.76 24H25.25C25.96 22.38 26.82 20.94 27.67 19.74ZM32.14 19C31.08 20.12 29.7 21.84 28.57 24H35.93C34.8 21.84 33.42 20.13 32.37 19.01C32.29 19 32.21 19 32.14 19ZM37.01 20C37.8 21.15 38.59 22.49 39.25 24H42.24C40.88 22.26 39.08 20.87 37.01 20Z" fill="#616876"/></svg></div>
+                    <h3 class="mob-card-title">Website</h3>
+                    <p class="mob-card-text">Custom-built, mobile-first websites built for modern search, including Google, AI platforms, and Maps. Designed around customer intent, local visibility, and the actions that turn visitors into leads.</p>
+                </div>
+                <div class="mob-card" id="mob-card-l3">
+                    <button class="mob-card-close" aria-label="Close"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+                    <div class="mob-card-icon"><svg viewBox="0 0 64 66" fill="none"><circle cx="32" cy="32" r="32" fill="#0897D6"/><circle cx="32" cy="32" r="26" fill="#FFFFFD"/><path d="M42.5 18C45.54 18 48 20.46 48 23.5V34.5C48 35.33 47.33 36 46.5 36C45.67 36 45 35.33 45 34.5V27.5H19V40C19 41.38 20.12 42.5 21.5 42.5H31.5C32.33 42.5 33 43.17 33 44C33 44.83 32.33 45.5 31.5 45.5H21.5C18.46 45.5 16 43.04 16 40V23.5C16 20.46 18.46 18 21.5 18H42.5ZM21.5 21C20.12 21 19 22.12 19 23.5V24.5H45V23.5C45 22.12 43.88 21 42.5 21H21.5Z" fill="#616876"/><path d="M31.63 30L31.78 30.02L35.03 30.38L35.56 30.44L45.43 40.31C47.12 42 47.12 44.74 45.43 46.43C43.74 48.12 41 48.12 39.31 46.43L29.44 36.56L29.38 36.03L29.02 32.78C28.84 31.23 30.1 29.92 31.63 30ZM32.3 35.18L41.43 44.31C41.95 44.83 42.79 44.83 43.31 44.31C43.83 43.79 43.83 42.95 43.31 42.43L34.18 33.3L32.07 33.07L32.3 35.18Z" fill="#616876"/></svg></div>
+                    <h3 class="mob-card-title">Content</h3>
+                    <p class="mob-card-text">Content written for SEO, AIO, local search, and Maps visibility, while still speaking clearly to the customer. Built to match search intent, improve rankings, support AI understanding, and move visitors toward conversion.</p>
+                </div>
+                <div class="mob-card" id="mob-card-l2">
+                    <button class="mob-card-close" aria-label="Close"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+                    <div class="mob-card-icon"><svg viewBox="0 0 64 66" fill="none"><circle cx="32" cy="32" r="32" fill="#0897D6"/><circle cx="32" cy="32" r="26" fill="#FFFFFD"/><path d="M45.56 44.44C46.15 45.03 46.15 45.97 45.56 46.56C44.97 47.15 44.03 47.15 43.44 46.56L37.44 40.56L39.56 38.44L45.56 44.44Z" fill="#616876"/><path d="M45 20C46.66 20 48 21.34 48 23V28.5C48 30.16 46.66 31.5 45 31.5C43.77 31.5 42.71 30.76 42.25 29.69L39.05 32.69C38.29 33.4 37.21 33.67 36.21 33.39L32.49 32.38L29.23 36.01C28.12 37.24 26.22 37.34 24.99 36.23C23.76 35.12 23.66 33.22 24.77 31.99L29.27 26.99C30.03 26.15 31.2 25.81 32.29 26.11L36.17 27.16L37.9 25.54C37.06 25.01 36.5 24.07 36.5 23C36.5 21.34 37.84 20 39.5 20H45Z" fill="#616876" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M31 18C33.1 18 35.08 18.5 36.83 19.38C36 19.99 35.39 20.87 35.14 21.9C33.87 21.32 32.48 21 31 21C25.48 21 21 25.48 21 31C21 36.52 25.48 41 31 41C35.79 41 39.79 37.63 40.77 33.13L42.07 31.91C42.58 32.35 43.19 32.68 43.87 32.85C42.97 39.16 37.55 44 31 44C23.82 44 18 38.18 18 31C18 23.82 23.82 18 31 18Z" fill="#616876"/></svg></div>
+                    <h3 class="mob-card-title">AI &amp; Search</h3>
+                    <p class="mob-card-text">Search structure, metadata, internal linking, structured data, and AI-ready formatting built into the foundation, so your pages can be understood by Google, local search systems, and AI platforms.</p>
+                </div>
+                <div class="mob-card" id="mob-card-r1">
+                    <button class="mob-card-close" aria-label="Close"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+                    <div class="mob-card-icon"><svg viewBox="0 0 64 66" fill="none"><circle cx="32" cy="32" r="32" fill="#B3D4A0"/><circle cx="32" cy="32" r="26" fill="#FFFFFD"/><g transform="translate(16,19.5)"><path d="M11.37 12.01C11.92 11.39 12.86 11.33 13.49 11.87C14.11 12.42 14.17 13.36 13.63 13.99L11.05 16.93L13.56 19.44C14.15 20.03 14.15 20.97 13.56 21.56C12.97 22.15 12.03 22.15 11.44 21.56L6.95 17.07L11.37 12.01Z" fill="#6A7661"/><path d="M18.94 11.94C19.53 11.35 20.47 11.35 21.06 11.94L25.55 16.43L21.13 21.49C20.58 22.11 19.64 22.17 19.01 21.63C18.39 21.08 18.33 20.14 18.87 19.51L21.45 16.57L18.94 14.06C18.35 13.47 18.35 12.53 18.94 11.94Z" fill="#6A7661"/><path fill-rule="evenodd" clip-rule="evenodd" d="M28 0C30.21 0 32 1.79 32 4V23C32 25.21 30.21 27 28 27H4C1.86 27 0.11 25.32 0 23.21L0 23V4C0 1.79 1.79 0 4 0H28ZM3 23C3 23.55 3.45 24 4 24H28C28.55 24 29 23.55 29 23V8.5H3V23ZM4 3C3.45 3 3 3.45 3 4V5.5H29V4C29 3.45 28.55 3 28 3H4Z" fill="#6A7661"/></g></svg></div>
+                    <h3 class="mob-card-title">Maintenance</h3>
+                    <p class="mob-card-text">Secure hosting, platform updates, performance tuning, monitoring, and technical management handled every month with nothing required from your team.</p>
+                </div>
+                <div class="mob-card" id="mob-card-r2">
+                    <button class="mob-card-close" aria-label="Close"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+                    <div class="mob-card-icon"><svg viewBox="0 0 64 66" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="32" fill="#B3D4A0"/><circle cx="32" cy="32" r="26" fill="#FFFFFD"/><path fill-rule="evenodd" clip-rule="evenodd" d="M42 19C44.21 19 46 20.79 46 23V43C46 45.14 44.32 46.89 42.21 46.995L42 47L21.79 46.995C19.75 46.89 18.11 45.25 18 43.21L18 34.73L18.96 36.04C19.51 36.8 20.22 37.35 21 37.68V40.17L23.07 38.1C24.57 38.07 26.06 37.39 27.04 36.04L32.02 29.2C32.05 29.15 32.09 29.1 32.13 29.04L39.17 22H33.95C33.84 20.95 33.59 19.95 33.22 19H42ZM22.83 44H28.67L34.92 37.75L32 34.83L22.83 44ZM34.33 44H41.17L37.75 40.58L34.33 44ZM34.83 32L43 40.17V23.83L34.83 32Z" fill="#6A7661"/><path d="M23 21C24.1 21 25 21.9 25 23C25 24.1 24.1 25 23 25C21.9 25 21 24.1 21 23C21 21.9 21.9 21 23 21Z" fill="#6A7661"/><path fill-rule="evenodd" clip-rule="evenodd" d="M23 15C27.42 15 31 18.66 31 23.08L30.99 23.37C30.94 24.83 30.45 26.26 29.59 27.44L24.62 34.28L24.54 34.38C23.74 35.34 22.26 35.34 21.46 34.38L21.38 34.28L16.41 27.44C15.49 26.18 15 24.64 15 23.08C15 18.66 18.58 15 23 15ZM23 18C20.28 18 18 20.28 18 23.08C18 24.01 18.3 24.93 18.84 25.67L23 31.4L27.17 25.67C27.7 24.93 28 24.01 28 23.08C28 20.28 25.72 18 23 18Z" fill="#6A7661"/></svg></div>
+                    <h3 class="mob-card-title">Maps</h3>
+                    <p class="mob-card-text">Google Business Profile and Maps optimization focused on improving local visibility in the Google 3-Pack, with support for Apple Maps and Bing Places.</p>
+                </div>
+                <div class="mob-card" id="mob-card-r3">
+                    <button class="mob-card-close" aria-label="Close"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+                    <div class="mob-card-icon"><svg viewBox="0 0 64 66" fill="none"><circle cx="32" cy="32" r="32" fill="#B3D4A0"/><circle cx="32" cy="32" r="26" fill="#FFFFFD"/><path fill-rule="evenodd" clip-rule="evenodd" d="M41.5 16C42.33 16 43 16.67 43 17.5V19L43.26 19.01C45.9 19.14 48 21.32 48 24V43C48 45.76 45.76 48 43 48H21C18.32 48 16.14 45.9 16.01 43.26L16 43V24C16 21.32 18.1 19.14 20.74 19.01L21 19V17.5C21 16.67 21.67 16 22.5 16C23.33 16 24 16.67 24 17.5V19H31V17.5C31 16.67 31.67 16 32.5 16C33.33 16 34 16.67 34 17.5V19H40V17.5C40 16.67 40.67 16 41.5 16ZM19 43C19 44.1 19.9 45 21 45H43C44.1 45 45 44.1 45 43V29.5H19V43ZM24 22.5C24 23.33 23.33 24 22.5 24C21.67 24 21 23.33 21 22.5V22C19.9 22 19 22.9 19 24V26.5H45V24C45 22.9 44.1 22 43 22V22.5C43 23.33 42.33 24 41.5 24C40.67 24 40 23.33 40 22.5V22H34V22.5C34 23.33 33.33 24 32.5 24C31.67 24 31 23.33 31 22.5V22H24V22.5Z" fill="#6A7661"/><path d="M32.5 32C33.33 32 34 32.67 34 33.5V41.5C34 42.33 33.33 43 32.5 43C31.67 43 31 42.33 31 41.5V36.28L30.35 37.07C30.13 37.34 29.8 37.5 29.45 37.5C28.47 37.5 27.93 36.36 28.55 35.6L31.15 32.43C31.37 32.16 31.7 32 32.05 32C32.2 32 32.35 32 32.5 32Z" fill="#6A7661"/></svg></div>
+                    <h3 class="mob-card-title">Site Optimization</h3>
+                    <p class="mob-card-text">Each month, we improve one priority page, section, or site area. This can include content updates, SEO improvements, AI structure tuning, menu and footer refinements, homepage adjustments, UX improvements, conversion updates, and focused design tweaks.</p>
+                </div>
+
+                <div class="mob-card" id="mob-card-r4">
+                    <button class="mob-card-close" aria-label="Close"><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+                    <div class="mob-card-icon"><svg viewBox="0 0 64 66" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="32" fill="#B3D4A0"/><circle cx="32" cy="32" r="26" fill="#FFFFFD"/><g transform="translate(17.5, 16)"><path d="M28.6398 16.2762L12.9987 0.366334C12.5188 -0.121851 11.7407 -0.121851 11.2609 0.366334C10.781 0.854519 10.7809 1.64595 11.2609 2.13408L12.3889 3.28151L6.71001 15.6019L1.07806 21.3306C-0.359355 22.7927 -0.359355 25.1718 1.07806 26.6339L2.816 28.4017C4.2568 29.8673 6.58891 29.8673 8.0297 28.4017L9.46958 26.9371L13.3358 30.8698C14.0355 31.5988 14.9718 32 15.9737 32C18.0065 32 19.6603 30.3178 19.6603 28.25C19.6603 27.231 19.2658 26.2785 18.5491 25.5668L15.0522 22.0098L25.7739 16.8964L26.902 18.0439C27.3819 18.5321 28.16 18.5321 28.6398 18.0439C29.1197 17.5558 29.1197 16.7643 28.6398 16.2762ZM6.29176 26.634C5.81152 27.1225 5.03419 27.1225 4.55388 26.634L2.81594 24.8662C2.3368 24.3788 2.3368 23.5858 2.81594 23.0984L7.73121 18.0987L11.207 21.6342L6.29176 26.634ZM16.8296 27.3533C17.0701 27.5908 17.2025 27.9093 17.2025 28.2501C17.2025 28.9394 16.6512 29.5001 15.9736 29.5001C15.6385 29.5001 15.3254 29.3655 15.0919 29.1209C15.0877 29.1165 11.2073 25.1694 11.2073 25.1694L12.9448 23.402C12.9448 23.402 16.8253 27.349 16.8296 27.3533ZM13.2041 20.1301L9.20992 16.0673L14.2369 5.16131L23.9258 15.0166L13.2041 20.1301Z" fill="#6A7661"/><path d="M24.1742 8.11154C24.4819 8.7268 25.2218 8.97186 25.8267 8.65886L28.3281 7.36442C28.933 7.05135 29.1739 6.29879 28.8661 5.68347C28.5584 5.06816 27.8186 4.82316 27.2136 5.13616L24.7122 6.4306C24.1073 6.74367 23.8664 7.49623 24.1742 8.11154Z" fill="#6A7661"/><path d="M21.0257 4.90885C21.6306 5.22185 22.3704 4.97678 22.6782 4.36147L23.9507 1.81702C24.2585 1.20171 24.0175 0.449143 23.4126 0.136142C22.8077 -0.176859 22.0679 0.0681422 21.7601 0.683519L20.4876 3.22796C20.1798 3.84328 20.4208 4.59584 21.0257 4.90885Z" fill="#6A7661"/></g></svg></div>
+                    <h3 class="mob-card-title">Marketing</h3>
+                    <p class="mob-card-text">Paid ads, social, email, and campaign strategy connected directly to your website, so every marketing channel supports focused pages built to attract better traffic and convert more leads.</p>
+                </div>
+
+                <!-- ── Stack row ── -->
+                <div class="mob-stack">
+                    <div class="mob-stack-label">Stack</div>
+                    <div class="mob-stack-icons-wrap">
+                        <div class="mob-stack-hline"></div>
+                        <div class="mob-stack-row">
+                            <!-- Google -->
+                            <div class="mob-stack-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#6B7A8F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12h-8v2.6h4.6A4.6 4.6 0 1 1 12 7.4a4.4 4.4 0 0 1 3 1.1l1.9-1.9A7 7 0 1 0 20 12.5z"/></svg></div>
+                            <!-- Google Ads -->
+                            <div class="mob-stack-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#6B7A8F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4l8 14H4L12 4z"/><path d="M12 10v4M12 16.5v.01"/></svg></div>
+                            <!-- Zapier -->
+                            <div class="mob-stack-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#6B7A8F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3L5 14h6l-1 7 8-11h-6l1-7z"/></svg></div>
+                            <!-- Layers -->
+                            <div class="mob-stack-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#6B7A8F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l9 4.5-9 4.5L3 8l9-4.5z"/><path d="M3 12l9 4.5L21 12M3 16l9 4.5L21 16"/></svg></div>
+                            <!-- Figma -->
+                            <div class="mob-stack-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#6B7A8F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="3" width="8" height="6" rx="3"/><rect x="8" y="9" width="8" height="6" rx="3"/><rect x="8" y="15" width="8" height="6" rx="3"/><circle cx="16" cy="12" r="3"/></svg></div>
+                            <!-- Maps pin -->
+                            <div class="mob-stack-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#6B7A8F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s7-6.5 7-12a7 7 0 1 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg></div>
+                            <!-- Apple -->
+                            <div class="mob-stack-ic"><svg viewBox="0 0 24 24" fill="none" stroke="#6B7A8F" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3a3 3 0 0 1-2.5 2.5M17 13a4 4 0 0 1 2-3.3c-1-1.4-2.6-2.2-4-2.2-1.7 0-2.3 1-3.6 1s-2-1-3.5-1C5 7.5 3 10 3 13.5c0 3.7 3 7.5 4.8 7.5 1.1 0 1.5-.8 3.2-.8s2 .8 3.2.8c1.7 0 3.3-2.5 3.8-4a4.2 4.2 0 0 1-1-4z"/></svg></div>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- end mob-mindmap -->
+        </div><!-- end mob-inner -->
+    </div><!-- end mob-hero -->
+
+</section>
+<script>
+    const hero = document.querySelector('.hero');
+    const cursorMask = document.getElementById('hero-cursor-mask');
+
+    hero.addEventListener('mousemove', (e) => {
+        const rect = hero.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        // Set percentages for the CSS variables
+        const xPercent = (x / rect.width) * 100;
+        const yPercent = (y / rect.height) * 100;
+
+        cursorMask.style.setProperty('--cursor-x', `${xPercent}%`);
+        cursorMask.style.setProperty('--cursor-y', `${yPercent}%`);
+    });
+
+    // Hide cursor mask when mouse leaves the hero section
+    hero.addEventListener('mouseleave', () => {
+        cursorMask.style.setProperty('--cursor-x', `-100%`);
+        cursorMask.style.setProperty('--cursor-y', `-100%`);
+    });
+
+    // Hover effects for groups (delegated to avoid cross-element flicker in Chrome)
+    const heroSection = document.querySelector('.hero');
+    let activeGroup = null;
+
+    function setGroupActive(group) {
+        if (!group || activeGroup === group) return;
+
+        if (activeGroup) {
+            clearGroupActive(activeGroup);
+        }
+
+        activeGroup = group;
+        heroSection.classList.add('is-hovering');
+        heroSection.classList.add(`hover-${group}`);
+
+        const card = document.querySelector(`.card-${group}`);
+        if (card) card.classList.add('active');
+
+        const currentGroupEls = document.querySelectorAll(`[data-group="${group}"]`);
+        currentGroupEls.forEach(item => {
+            if (item.classList.contains('hero-tag-icon') || item.classList.contains('hero-tag-icon-label')) {
+                item.classList.add('hover-active');
+            }
+        });
+
+        const dot = document.querySelector(`.dot-${group}`);
+        if (dot) dot.classList.add('active');
+    }
+
+    function clearGroupActive(group) {
+        if (!group) return;
+
+        heroSection.classList.remove('hover-' + group);
+
+        const card = document.querySelector(`.card-${group}`);
+        if (card) card.classList.remove('active');
+
+        const currentGroupEls = document.querySelectorAll(`[data-group="${group}"]`);
+        currentGroupEls.forEach(item => {
+            item.classList.remove('hover-active');
+        });
+
+        const dot = document.querySelector(`.dot-${group}`);
+        if (dot) dot.classList.remove('active');
+
+        if (activeGroup === group) {
+            activeGroup = null;
+            heroSection.classList.remove('is-hovering');
+        }
+    }
+
+    heroSection.addEventListener('mouseover', (e) => {
+        const target = e.target.closest('.hover-group');
+        if (!target) return;
+
+        const group = target.getAttribute('data-group');
+        setGroupActive(group);
+    });
+
+    heroSection.addEventListener('mouseout', (e) => {
+        if (!activeGroup) return;
+
+        const fromEl = e.target.closest('.hover-group');
+        if (!fromEl || fromEl.getAttribute('data-group') !== activeGroup) return;
+
+        const toEl = e.relatedTarget ? e.relatedTarget.closest('.hover-group') : null;
+        const toGroup = toEl ? toEl.getAttribute('data-group') : null;
+
+        // Keep active when moving within the same group.
+        if (toGroup === activeGroup) return;
+
+        clearGroupActive(activeGroup);
+    });
+</script>
+
+<script>
+    // Mobile node tap → show card centered overlay
+    (function () {
+        var MAP = {
+            'mn-l1': 'mob-card-l1',
+            'mn-l3': 'mob-card-l3',
+            'mn-l2': 'mob-card-l2',
+            'mn-r1': 'mob-card-r1',
+            'mn-r2': 'mob-card-r2',
+            'mn-r3': 'mob-card-r3',
+            'mn-r4': 'mob-card-r4',
+        };
+        var activeNode = null;
+        var backdrop = document.getElementById('mob-backdrop');
+
+        function closeActive() {
+            if (!activeNode) return;
+            var prev = document.getElementById(MAP[activeNode]);
+            if (prev) prev.classList.remove('active');
+            var prevNode = document.getElementById(activeNode);
+            if (prevNode) prevNode.classList.remove('active');
+            if (backdrop) backdrop.classList.remove('active');
+            activeNode = null;
+        }
+
+        Object.keys(MAP).forEach(function (nodeId) {
+            var node = document.getElementById(nodeId);
+            var card = document.getElementById(MAP[nodeId]);
+            if (!node || !card) return;
+
+            node.addEventListener('click', function (e) {
+                e.stopPropagation();
+                var isSame = activeNode === nodeId;
+                closeActive();
+                if (!isSame) {
+                    card.classList.add('active');
+                    node.classList.add('active');
+                    if (backdrop) backdrop.classList.add('active');
+                    activeNode = nodeId;
+                }
+            });
+
+            var closeBtn = card.querySelector('.mob-card-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    closeActive();
+                });
+            }
+        });
+
+        // Tap backdrop or outside closes card
+        if (backdrop) {
+            backdrop.addEventListener('click', function () { closeActive(); });
+        }
+        document.addEventListener('click', function () { closeActive(); });
+    }());
+</script>
+</body>
+</html>

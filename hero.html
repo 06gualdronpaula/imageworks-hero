@@ -344,6 +344,20 @@
   .iwc-pill-blue  { background: #18497D; left: 27%; }
   .iwc-pill-green { background: #4A8628; right: 27%; }
 
+  /* ---------- Diagram (vendored SVG) ---------- */
+  .diagram-wrap {
+    width: 100%;
+    max-width: 1100px;
+    margin: 60px auto 0;
+    padding: 0 20px;
+    box-sizing: border-box;
+  }
+  .diagram-svg {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
   @media (max-width: 720px) {
     .iwc-label { font-size: 12px; }
     .iwc-icon { width: 44px; height: 44px; }
@@ -427,81 +441,8 @@
       <button class="btn btn-primary">View plans</button>
     </div>
 
-    <div class="iwc-diagram">
-      <svg class="iwc-connectors" viewBox="0 0 1054 535" preserveAspectRatio="none" aria-hidden="true">
-        <defs>
-          <linearGradient id="iwcBlueGrad" x1="305.75" y1="181" x2="1.9" y2="181" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#18497D"/><stop offset="1" stop-color="#00BBFF"/>
-          </linearGradient>
-          <linearGradient id="iwcGreenGrad" x1="721" y1="181" x2="1024.84" y2="181" gradientUnits="userSpaceOnUse">
-            <stop stop-color="#4A8628"/><stop offset="1" stop-color="#B3D4A0"/>
-          </linearGradient>
-        </defs>
-        <!-- left connectors -->
-        <path d="M305.75 235.25H283.094C248.722 235.25 217.422 215.457 202.687 184.404L154.497 82.8464C139.762 51.7928 108.463 32 74.0904 32H63.2192" stroke="url(#iwcBlueGrad)" stroke-width="3" fill="none"/>
-        <path d="M281 235H61" stroke="url(#iwcBlueGrad)" stroke-width="3" fill="none"/>
-        <path d="M305.75 235H283.094C248.722 235 217.422 254.793 202.687 285.846L154.497 387.404C139.762 418.457 108.463 438.25 74.0904 438.25H63.2192" stroke="url(#iwcBlueGrad)" stroke-width="3" fill="none"/>
-        <!-- right connectors -->
-        <path d="M721 235.25H743.656C778.028 235.25 809.328 215.457 824.063 184.404L872.253 82.8464C886.988 51.7928 918.287 32 952.66 32H963.531" stroke="url(#iwcGreenGrad)" stroke-width="3" fill="none"/>
-        <path d="M721 233.5H769.243C789.13 233.5 808.445 226.839 824.104 214.58L872.211 176.92C887.871 164.661 907.185 158 927.073 158H993" stroke="url(#iwcGreenGrad)" stroke-width="3" fill="none"/>
-        <path d="M721 236H769.243C789.13 236 808.445 242.661 824.104 254.92L872.211 292.58C887.871 304.839 907.185 311.5 927.073 311.5H993" stroke="url(#iwcGreenGrad)" stroke-width="3" fill="none"/>
-        <path d="M721 236H743.656C778.028 236 809.328 255.793 824.063 286.846L872.253 388.404C886.988 419.457 918.287 439.25 952.66 439.25H963.531" stroke="url(#iwcGreenGrad)" stroke-width="3" fill="none"/>
-        <!-- pill connectors -->
-        <path d="M382.5 432.5H313.5C309.634 432.5 306.5 435.634 306.5 439.5V446.5" stroke="rgba(255,255,255,0.35)" stroke-width="2" fill="none" stroke-linecap="round"/>
-        <path d="M653.5 432.5H722.5C726.366 432.5 729.5 435.634 729.5 439.5V446.5" stroke="rgba(255,255,255,0.35)" stroke-width="2" fill="none" stroke-linecap="round"/>
-      </svg>
-
-      <img class="iwc-center-svg" src="center.svg" alt="Center graphic" />
-
-      <!-- left (Initial Build) nodes -->
-      <a class="iwc-node iwc-node-left" href="#" style="top:2%;left:0;">
-        <span class="iwc-icon iwc-icon-blue">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg>
-        </span>
-        <span class="iwc-label">Website</span>
-      </a>
-      <a class="iwc-node iwc-node-left" href="#" style="top:42%;left:0;">
-        <span class="iwc-icon iwc-icon-blue">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-        </span>
-        <span class="iwc-label">AI &amp; Search</span>
-      </a>
-      <a class="iwc-node iwc-node-left" href="#" style="top:78%;left:3%;">
-        <span class="iwc-icon iwc-icon-blue">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M6 3h9l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/><path d="M14 3v5h5M8 13h8M8 17h5"/></svg>
-        </span>
-        <span class="iwc-label">Content</span>
-      </a>
-
-      <!-- right (Ongoing) nodes -->
-      <a class="iwc-node iwc-node-right" href="#" style="top:2%;right:0;">
-        <span class="iwc-label">Maintenance</span>
-        <span class="iwc-icon iwc-icon-green">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M14.7 6.3a4 4 0 0 0-5.6 5.6L3 18l3 3 6.1-6.1a4 4 0 0 0 5.6-5.6l-2.5 2.5-2.5-.7-.7-2.5 2.5-2.5z"/></svg>
-        </span>
-      </a>
-      <a class="iwc-node iwc-node-right" href="#" style="top:26%;right:0;">
-        <span class="iwc-label">Maps</span>
-        <span class="iwc-icon iwc-icon-green">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M12 22s7-7.6 7-13a7 7 0 1 0-14 0c0 5.4 7 13 7 13z"/><circle cx="12" cy="9" r="2.5"/></svg>
-        </span>
-      </a>
-      <a class="iwc-node iwc-node-right" href="#" style="top:54%;right:0;">
-        <span class="iwc-label">Site Optimization</span>
-        <span class="iwc-icon iwc-icon-green">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 20V10M9 20V4M15 20v-7M21 20v-12"/></svg>
-        </span>
-      </a>
-      <a class="iwc-node iwc-node-right" href="#" style="top:78%;right:3%;">
-        <span class="iwc-label">Marketing</span>
-        <span class="iwc-icon iwc-icon-green">
-          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M3 11v2l11 5V6L3 11zM14 8v8"/></svg>
-        </span>
-      </a>
-
-      <!-- pills -->
-      <a class="iwc-pill iwc-pill-blue" href="#">Initial Build</a>
-      <a class="iwc-pill iwc-pill-green" href="#">Ongoing</a>
+    <div class="diagram-wrap">
+      <img class="diagram-svg" src="hero_graphics.svg" alt="Website + Marketing service diagram" />
     </div>
   </header>
 
