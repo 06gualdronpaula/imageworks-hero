@@ -613,23 +613,19 @@
   }
   .about-visual {
     position: relative;
-    min-height: 360px;
     display: flex;
     align-items: center;
     justify-content: center;
-    border: 1px dashed rgba(255, 255, 255, 0.18);
-    border-radius: 18px;
-    color: rgba(255, 255, 255, 0.4);
-    font-size: 13px;
   }
-  .about-visual::before {
-    content: "Graphic coming soon";
+  .about-visual img {
+    display: block;
+    width: 100%;
+    height: auto;
   }
 
   @media (max-width: 900px) {
     .about { padding: 80px 0; }
     .about-inner { grid-template-columns: 1fr; gap: 50px; padding: 0 24px; }
-    .about-visual { min-height: 280px; }
   }
 </style>
 </head>
@@ -779,7 +775,9 @@
         </p>
         <a class="about-cta" href="#">Explore the Plans</a>
       </div>
-      <div class="about-visual" aria-label="Graphic placeholder"></div>
+      <div class="about-visual">
+        <img src="about-graphic.svg" alt="Local business analytics dashboard illustration" />
+      </div>
     </div>
   </section>
 
